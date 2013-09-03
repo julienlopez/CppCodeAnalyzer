@@ -28,6 +28,14 @@ void RedondantHeaderAnalyzer::analyseVertex(const DependencyGraph& g, Dependency
 	for(const DependencyGraph::vertex_descriptor& d : parents)
 	{
 		std::cerr << g(d) << std::endl;
+		for(const DependencyGraph::vertex_descriptor& d2 : parents)
+		{
+			if(d == d2) continue;
+			if(g.areLinked(d, d2))
+			{
+				std::cerr << "include redondant: " << g(d) << " et " << g(d2) << std::endl;
+			}
+		}
 	}
 	std::cerr << std::endl;
 }

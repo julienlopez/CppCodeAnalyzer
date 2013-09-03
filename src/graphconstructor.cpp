@@ -33,16 +33,14 @@ void GraphConstructor::browseDirectory(DependencyGraph& graph, const boost::file
 void GraphConstructor::analyseFile(DependencyGraph& graph, const boost::filesystem::path& p) throw(std::exception)
 {
 	assert(boost::filesystem::exists(p));
+	boost::filesystem::path dir = p.parent_path();
 
-	if(std::find_if(s_extensions.begin(), s_extensions.end(), [&](const std::string& extension)
-					{
-						return StringHelper::endsWith(p.generic_string(), "."+extension);
-					} ) == s_extensions.end())
-		return;
+	std::string ext = p.extension().generic_string();
+	if(ext.length() > 0 && ext.front() == '.') ext.erase(0, 1);
+	if(std::find(s_extensions.begin(), s_extensions.end(), ext) == s_extensions.end()) return;
 
 	std::string fileName = p.generic_string();
 	if(StringHelper::startsWith(fileName, "./")) fileName.erase(0, 2);
-	cout << p << " : " << fileName << endl;
 	ifstream f(p.generic_string().c_str(), ios::in);
 	if(!f) throw std::invalid_argument("Impossible d'ouvrir le fichier " + p.generic_string());
 
@@ -51,13 +49,25 @@ void GraphConstructor::analyseFile(DependencyGraph& graph, const boost::filesyst
 	{
         if(!StringHelper::startsWith(line, "#include ")) continue;
         line.erase(0, 9);
-//		std::cout << line << std::endl;
+
 		if(!(StringHelper::startsWith(line, "\"") && StringHelper::endsWith(line, "\"")) && !(StringHelper::startsWith(line, "<") && StringHelper::endsWith(line, ">")))
 			throw("ligne invalide: " + line);
-//		std::cout << line << std::endl;
+
 		line.erase(0, 1);
 		line.erase(line.length()-1, 1);
-		std::cout << line << std::endl;
-		graph.addLien(line, fileName);
+
+		boost::filesystem::path p(line);
+		if(!boost::filesystem::exists(p))
+		{
+			p = boost::filesystem::path(dir.generic_string() + "/" + p.generic_string());
+			if(!boost::filesystem::exists(p))
+			{
+				cerr << "toujours pas trouvé!" << endl;
+				p = boost::filesystem::path(line);
+			}
+		}
+		std::string newFile = p.generic_string();
+		if(StringHelper::startsWith(newFile, "./")) newFile.erase(0, 2);
+		graph.addLien(newFile, fileName);
 	}
 }

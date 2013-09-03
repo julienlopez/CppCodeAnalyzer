@@ -68,6 +68,11 @@ std::list<DependencyGraph::vertex_descriptor> DependencyGraph::parents(vertex_de
 	return res;
 }
 
+bool DependencyGraph::areLinked(vertex_descriptor v1, vertex_descriptor v2) const
+{
+	
+}
+
 DependencyGraph::label_writer::label_writer(const DependencyGraph & sr) : d_sr(sr) {
 }
 void DependencyGraph::label_writer::operator()(std::ostream& out, const boost::graph_traits<Reseau>::vertex_descriptor& v) const {

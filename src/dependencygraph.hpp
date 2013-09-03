@@ -28,6 +28,8 @@ public:
 
   std::list<vertex_descriptor> parents(vertex_descriptor v) const;
 
+  bool areLinked(vertex_descriptor v1, vertex_descriptor v2) const;
+
 private:
 
   typedef boost::graph_traits<Reseau>::in_edge_iterator in_edge_iterator;
