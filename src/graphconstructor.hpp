@@ -1,7 +1,7 @@
 #ifndef __GRAPHCONSTRUCTOR_HPP__
 #define __GRAPHCONSTRUCTOR_HPP__
 
-#include "stringhelper.hpp"
+#include <utils/stringhelper.hpp>
 
 #include <stdexcept>
 #include <boost/filesystem.hpp>

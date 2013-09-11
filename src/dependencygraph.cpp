@@ -2,6 +2,7 @@
 
 #include <fstream>
 #include <boost/graph/graphviz.hpp>
+#include <boost/graph/breadth_first_search.hpp>
 
 DependencyGraph::DependencyGraph()
 {}
@@ -10,8 +11,8 @@ void DependencyGraph::print() const {
     std::ofstream g("z.dot");
     boost::write_graphviz(g, d_reseau, label_writer(*this));
     g.close();
-    char c = system("dot -Tps -Goverlap=false z.dot -o z.ps");
-    c= system("gv z.ps ");
+    int c = system("dot -Tps -Goverlap=false z.dot -o z.ps");
+    c = system("gv z.ps ");
     if(c) {
 
     }
@@ -68,9 +69,33 @@ std::list<DependencyGraph::vertex_descriptor> DependencyGraph::parents(vertex_de
 	return res;
 }
 
+namespace {
+	template<class GRAPH>
+	class custom_bfs_visitor : public boost::default_bfs_visitor
+	{
+	public:
+		typedef typename GRAPH::vertex_descriptor vertex_descriptor;
+		custom_bfs_visitor(vertex_descriptor toFind, bool& found): m_toFind(toFind), m_found(found)
+		{}
+	 
+		template<typename Vertex, typename Graph>
+		void discover_vertex(Vertex u, const Graph&) const
+	 	{
+	    	if(u == m_toFind) m_found = true;
+		}
+
+	private:
+		vertex_descriptor m_toFind;
+		bool& m_found;
+	};
+}
+
 bool DependencyGraph::areLinked(vertex_descriptor v1, vertex_descriptor v2) const
 {
-	
+	bool found = false;
+	custom_bfs_visitor<DependencyGraph> vis(v2, found);
+  	breadth_first_search(d_reseau, v1, visitor(vis));
+  	return found;
 }
 
 DependencyGraph::label_writer::label_writer(const DependencyGraph & sr) : d_sr(sr) {

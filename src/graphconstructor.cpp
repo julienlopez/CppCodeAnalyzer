@@ -56,17 +56,17 @@ void GraphConstructor::analyseFile(DependencyGraph& graph, const boost::filesyst
 		line.erase(0, 1);
 		line.erase(line.length()-1, 1);
 
-		boost::filesystem::path p(line);
-		if(!boost::filesystem::exists(p))
+		boost::filesystem::path path(line);
+		if(!boost::filesystem::exists(path))
 		{
-			p = boost::filesystem::path(dir.generic_string() + "/" + p.generic_string());
-			if(!boost::filesystem::exists(p))
+			path = boost::filesystem::path(dir.generic_string() + "/" + path.generic_string());
+			if(!boost::filesystem::exists(path))
 			{
 				cerr << "toujours pas trouvé!" << endl;
-				p = boost::filesystem::path(line);
+				path = boost::filesystem::path(line);
 			}
 		}
-		std::string newFile = p.generic_string();
+		std::string newFile = path.generic_string();
 		if(StringHelper::startsWith(newFile, "./")) newFile.erase(0, 2);
 		graph.addLien(newFile, fileName);
 	}

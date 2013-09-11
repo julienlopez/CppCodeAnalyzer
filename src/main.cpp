@@ -1,10 +1,8 @@
 #include "graphconstructor.hpp"
 #include "dependencygraph.hpp"
-#include "stringhelper.hpp"
 
 #include <boost/program_options.hpp>
 
-#include <iostream>
 #include <cstdlib>
 
 using namespace std;
@@ -66,7 +64,7 @@ int main(int argc, char* argv[])
 			graph.print();
 		else if(vm.count("analyze"))
 			analyze(graph);
-		else cerr << "que dalle!!!" << endl;
+		else assert(0);
 	}
 	catch(std::exception& e) {
 		cerr << e.what() << endl;

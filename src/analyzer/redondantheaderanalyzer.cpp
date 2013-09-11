@@ -7,6 +7,7 @@ RedondantHeaderAnalyzer::RedondantHeaderAnalyzer(const DependencyGraph& g) noexc
 
 void RedondantHeaderAnalyzer::do_analyze()
 {
+	m_datas.clear();
 	const DependencyGraph& g = graph();
 	DependencyGraph::vertex_iterator i, i_end;
 	std::tie(i, i_end) = g.vertices();
@@ -18,24 +19,25 @@ void RedondantHeaderAnalyzer::do_analyze()
 
 void RedondantHeaderAnalyzer::do_printReport(std::ostream& out) const
 {
-	out << "Redondant header analysis report:" << std::endl << std::endl;
+	const DependencyGraph& g = graph();
+	out << "Redondant header analysis report:" << std::endl;
+	for(const ReportData& data : m_datas)
+	{
+		out << "In file " << g(data.m_sourceFile) << ": redondant inclusion of " << g(data.m_redondantHeader) << 
+				". It is already included by " << g(data.m_headerAlreadyIncludingIt) << std::endl;
+	}
 }
 
 void RedondantHeaderAnalyzer::analyseVertex(const DependencyGraph& g, DependencyGraph::vertex_iterator it)
 {
-	std::cerr << g(*it) << " inclue : " << std::endl;
 	std::list<DependencyGraph::vertex_descriptor> parents = g.parents(*it);
 	for(const DependencyGraph::vertex_descriptor& d : parents)
 	{
-		std::cerr << g(d) << std::endl;
 		for(const DependencyGraph::vertex_descriptor& d2 : parents)
 		{
 			if(d == d2) continue;
 			if(g.areLinked(d, d2))
-			{
-				std::cerr << "include redondant: " << g(d) << " et " << g(d2) << std::endl;
-			}
+				m_datas.push_back(ReportData(*it, d, d2));
 		}
 	}
-	std::cerr << std::endl;
 }

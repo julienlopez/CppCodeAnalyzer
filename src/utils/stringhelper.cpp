@@ -17,6 +17,18 @@ bool StringHelper::endsWith(const std::string& str, const std::string& token)
 	return res;
 }
 
+bool StringHelper::contains(const std::string& str, const std::string& token)
+{
+	return str.find(token) != std::string::npos;
+}
+
+std::string StringHelper::trim(std::string str)
+{
+	while(isspace(str.front())) str.erase(0, 1);
+	while(isspace(str.back())) str.erase(str.size() -1, 1);
+	return str;
+}
+
 std::string StringHelper::join(const type_vector_string& vector, const std::string& joint)
 {
 	std::string res;

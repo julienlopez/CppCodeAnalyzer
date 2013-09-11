@@ -1,6 +1,6 @@
 #include "ianalyzer.hpp"
 
-iAnalyzer::iAnalyzer(const DependencyGraph& graph): m_graph(graph)
+iAnalyzer::iAnalyzer(const DependencyGraph& g): m_graph(g)
 {}
 
 const DependencyGraph& iAnalyzer::graph() const

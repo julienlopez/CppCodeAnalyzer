@@ -9,6 +9,8 @@ class StringHelper
 	public:
 		static bool startsWith(const std::string& str, const std::string& token);
 		static bool endsWith(const std::string& str, const std::string& token);
+		static bool contains(const std::string& str, const std::string& token);
+		static std::string trim(std::string str);
 
 		typedef std::vector<std::string> type_vector_string;
 

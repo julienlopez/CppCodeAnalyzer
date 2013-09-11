@@ -23,7 +23,7 @@ public:
 
 protected:
 	iAnalyzer() = delete;
-	iAnalyzer(const DependencyGraph& graph);
+	iAnalyzer(const DependencyGraph& g);
 	iAnalyzer(const iAnalyzer&) = default;
 	iAnalyzer(iAnalyzer&&) = default;
 

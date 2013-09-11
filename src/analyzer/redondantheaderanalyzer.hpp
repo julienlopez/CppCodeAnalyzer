@@ -21,6 +21,20 @@ private:
 	virtual void do_printReport(std::ostream& out) const override;
 
 	void analyseVertex(const DependencyGraph& g, DependencyGraph::vertex_iterator it);
+
+	struct ReportData
+	{
+		typedef DependencyGraph::vertex_descriptor vertex_descriptor;
+		vertex_descriptor m_sourceFile;
+		vertex_descriptor m_redondantHeader;
+		vertex_descriptor m_headerAlreadyIncludingIt;
+
+		ReportData(vertex_descriptor sourceFile, vertex_descriptor redondantHeader, vertex_descriptor headerAlreadyIncludingIt):
+			m_sourceFile(sourceFile), m_redondantHeader(redondantHeader), m_headerAlreadyIncludingIt(headerAlreadyIncludingIt)
+		{}
+	};
+
+	std::list<ReportData> m_datas;
 };
 
 #endif
