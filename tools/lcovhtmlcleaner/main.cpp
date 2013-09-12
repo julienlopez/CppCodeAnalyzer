@@ -27,9 +27,6 @@ StringHelper::type_vector_string convert(const StringHelper::type_vector_string&
 	if(!StringHelper::contains(line, "<td class=\"coverFile\">"))
 		return block;
 
-	// cerr << "block to check: " << endl;
-	// cerr << line << endl;
-
 	std::size_t pos = line.find("<a href=");
 	assert(pos != std::string::npos);
 	pos = line.find(">", pos+1);
@@ -37,7 +34,6 @@ StringHelper::type_vector_string convert(const StringHelper::type_vector_string&
 	std::size_t endPos = line.find("</a>", pos+1);
 	assert(endPos != std::string::npos);
 	std::string path = line.substr(pos+1, endPos-pos-1);
-	cerr << path << endl;
 
 	if(!StringHelper::contains(path, "CppCodeAnalyzer/src")) return StringHelper::type_vector_string();
 
@@ -85,16 +81,12 @@ int main(int argc, char* argv[])
 		return EXIT_FAILURE;
 	}
 	StringHelper::type_vector_string inLines = file2vector(input);
-	cerr << inLines.size() << " lines parsed" << endl;
 
 	StringHelper::type_vector_string outLines = clean(inLines);
-	std::string outFileName = argv[1];
-	outFileName = outFileName.substr(0, outFileName.size()-5) + "-clean.html";
-	// cerr << argv[1] << " => " << outFileName << endl;
-	std::ofstream out(outFileName.c_str(), ios_base::out | ios_base::trunc);
+
+	std::ofstream out(argv[1], ios_base::out | ios_base::trunc);
 	for(const auto line : outLines)
 		out << line << endl;
-
 
 	return EXIT_SUCCESS;
 }
