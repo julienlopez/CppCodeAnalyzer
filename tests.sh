@@ -10,3 +10,6 @@ lcov --capture --initial --directory $OBJ_DIR --output-file app
 ../bin/tests
 lcov --no-checksum --directory $OBJ_DIR --capture --output-file app.info
 genhtml -o html app.info
+
+cp html/index.html html/index.html.bak
+../bin/lcovHTMLcleaner html/index.html
