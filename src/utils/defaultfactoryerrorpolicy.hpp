@@ -18,7 +18,7 @@ public:
 		
 		virtual const char* what()
 		{
-			return "Type inconnu passé à la factory.";
+			return "Unknown type identifier passed to the factory.";
 		}
 		
         typename const_parameter_trait<IdentifierType>::type getId() const
