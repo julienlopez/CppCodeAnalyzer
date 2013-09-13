@@ -21,6 +21,12 @@ void RedondantHeaderAnalyzer::do_printReport(std::ostream& out) const
 {
 	const DependencyGraph& g = graph();
 	out << "Redondant header analysis report:" << std::endl;
+	if(m_datas.empty())
+	{
+		out << "Nothing detected" << std::endl;
+		return;
+	}
+
 	for(const ReportData& data : m_datas)
 	{
 		out << "In file " << g(data.m_sourceFile) << ": redondant inclusion of " << g(data.m_redondantHeader) << 
