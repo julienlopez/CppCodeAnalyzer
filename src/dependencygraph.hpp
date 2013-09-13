@@ -16,7 +16,7 @@ public:
 
 	DependencyGraph();
 
-	void print() const;
+	void print(std::ostream& o) const;
 
   void addNoeud(const std::string& noeud);
 
@@ -50,7 +50,7 @@ private:
   typedef std::set<std::pair<std::string, std::string> > type_linkPost;
   type_linkPost d_link;
 
-  void remplaceVertex(vertex_iterator i);
+//  void remplaceVertex(vertex_iterator i);
 };
 
 #endif // __DEPENDENCYGRAPH_HPP__
