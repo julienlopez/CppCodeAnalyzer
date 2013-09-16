@@ -7,15 +7,8 @@
 DependencyGraph::DependencyGraph()
 {}
 
-void DependencyGraph::print() const {
-    std::ofstream g("z.dot");
-    boost::write_graphviz(g, d_reseau, label_writer(*this));
-    g.close();
-    int c = system("dot -Tps -Goverlap=false z.dot -o z.ps");
-    c = system("gv z.ps ");
-    if(c) {
-
-    }
+void DependencyGraph::print(std::ostream& o) const {
+    boost::write_graphviz(o, d_reseau, label_writer(*this));
 }
 
 void DependencyGraph::addNoeud(const std::string& noeud) {
@@ -102,42 +95,9 @@ DependencyGraph::label_writer::label_writer(const DependencyGraph & sr) : d_sr(s
 }
 void DependencyGraph::label_writer::operator()(std::ostream& out, const boost::graph_traits<Reseau>::vertex_descriptor& v) const {
 	out << "[label=\"" << createLabel(v) << "\"";
-
-/*
-	if(attr.type() == OPERATION) {
-		out << " shape=diamond";
-	}
-	std::string color = nodeType2color(attr.type());
-	if(!color.empty()) {
-		out << " fillcolor=\"" << color << "\" style=filled";
-	}
-*/
-
 	out << "]";
 }
 
 std::string DependencyGraph::label_writer::createLabel(const boost::graph_traits<Reseau>::vertex_descriptor& v) const {
 	return d_sr.d_reseau[v];;
-}
-
-void DependencyGraph::remplaceVertex(vertex_iterator i) {
-	typedef boost::graph_traits<Reseau>::adjacency_iterator adj_iter;
-	adj_iter it_aval, it_begin, it_end;
-	boost::tie(it_begin, it_end) = adjacent_vertices(*i, d_reseau);
-	it_aval = it_begin;
-	assert((++it_begin) == it_end);
-
-	typedef Reseau::inv_adjacency_iterator inv_adj_iter;
-	inv_adj_iter it_amont, it_begin2, it_end2;
-	boost::tie(it_begin2, it_end2) = inv_adjacent_vertices(*i, d_reseau);
-	it_amont = it_begin2;
-	assert((++it_begin2) == it_end2);
-
-	add_edge(*it_amont, *it_aval, d_reseau);
-	d_link.insert(std::make_pair(d_reseau[*it_amont], d_reseau[*it_aval]));
-
-	std::string str = d_reseau[*i];
-	boost::clear_vertex(*i, d_reseau);
-	boost::remove_vertex(*i, d_reseau);
-	d_mid2vertex.erase(str);
 }

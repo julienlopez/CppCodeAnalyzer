@@ -4,6 +4,7 @@
 #include <boost/program_options.hpp>
 
 #include <cstdlib>
+#include <fstream>
 
 using namespace std;
 
@@ -61,7 +62,13 @@ int main(int argc, char* argv[])
 			GraphConstructor::buildGraph(graph, boost::filesystem::path(*i));
 
 		if(vm.count("graph"))
-			graph.print();
+		{
+			std::ofstream g("z.dot");
+    		graph.print(g);
+    		g.close();
+    		system("dot -Tps -Goverlap=false z.dot -o z.ps");
+    		system("gv z.ps ");
+		}
 		else if(vm.count("analyze"))
 			analyze(graph);
 		else assert(0);
