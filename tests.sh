@@ -3,13 +3,29 @@
 BUILD_DIR=build_tests
 OBJ_DIR=CMakeFiles/tests.dir
 
+function error_exit
+{
+	echo "$1" 1>&2
+	exit 1
+}
+
 [ -d "$BUILD_DIR" ] && rm -rf $BUILD_DIR
 mkdir $BUILD_DIR && cd $BUILD_DIR && cmake ../tests -G"Unix Makefiles" && make VERBOSE=1
-lcov --zerocounters --directory $OBJ_DIR
-lcov --capture --initial --directory $OBJ_DIR --output-file app
+
+[ $? -ne 0 ] && error_exit "Compile step failed."
+
+lcov --zerocounters --directory $OBJ_DIR > lcov.log 2> lcov.err
+lcov --capture --initial --directory $OBJ_DIR --output-file app >> lcov.log 2>> lcov.err
+
 ../bin/tests
-lcov --no-checksum --directory $OBJ_DIR --capture --output-file app.info
-genhtml -o html app.info
+
+echo "analyzing coverage data..."
+
+lcov --no-checksum --directory $OBJ_DIR --capture --output-file app.info >> lcov.log 2>> lcov.err
+genhtml -o html app.info >> lcov.log 2>> lcov.err
 
 cp html/index.html html/index.html.bak
 ../bin/lcovHTMLcleaner html/index.html
+
+echo "done!"
+
