@@ -4,7 +4,7 @@ project(CppCodeAnalyzerTests)
 
 set(EXECUTABLE_OUTPUT_PATH ../bin)
 
-ADD_DEFINITIONS(-std=c++11 -g -O0 --coverage)
+ADD_DEFINITIONS(-std=c++11 -g -O0 --coverage -Wall -Wextra -pedantic -Wshadow -Wpointer-arith -Wcast-align -Wwrite-strings -Wmissing-declarations -Wredundant-decls -Winline -Wno-long-long -Wuninitialized -Wconversion)
 SET(CMAKE_EXE_LINKER_FLAGS "-g -O0 --coverage")
 
 include_directories(../src)
