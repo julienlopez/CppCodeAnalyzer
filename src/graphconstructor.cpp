@@ -7,12 +7,20 @@ using namespace std;
 
 StringHelper::type_vector_string GraphConstructor::s_extensions = {"h", "hpp", "h++", "c", "cc", "cpp"};
 
-void GraphConstructor::buildGraph(DependencyGraph& graph, const boost::filesystem::path& p) throw(std::exception)
+GraphConstructor::ParsingError::ParsingError(const std::string& message): std::exception(), m_message(message)
+{}
+
+const char* GraphConstructor::ParsingError::what() const noexcept
+{
+	return m_message.c_str();
+}
+
+void GraphConstructor::buildGraph(DependencyGraph& graph, const boost::filesystem::path& p)
 {
 	browseDirectory(graph, p);
 }
 
-void GraphConstructor::browseDirectory(DependencyGraph& graph, const boost::filesystem::path& p) throw(std::exception)
+void GraphConstructor::browseDirectory(DependencyGraph& graph, const boost::filesystem::path& p)
 {
 	std::cout << "GraphConstructor::browseDirectory(" << p.generic_string() << ")" << std::endl;
 
@@ -30,7 +38,7 @@ void GraphConstructor::browseDirectory(DependencyGraph& graph, const boost::file
 	}
 }
 
-void GraphConstructor::analyseFile(DependencyGraph& graph, const boost::filesystem::path& p) throw(std::exception)
+void GraphConstructor::analyseFile(DependencyGraph& graph, const boost::filesystem::path& p)
 {
 	assert(boost::filesystem::exists(p));
 	boost::filesystem::path dir = p.parent_path();
@@ -50,8 +58,10 @@ void GraphConstructor::analyseFile(DependencyGraph& graph, const boost::filesyst
         if(!StringHelper::startsWith(line, "#include ")) continue;
         line.erase(0, 9);
 
+        cleanUpLine(line);
+
 		if(!(StringHelper::startsWith(line, "\"") && StringHelper::endsWith(line, "\"")) && !(StringHelper::startsWith(line, "<") && StringHelper::endsWith(line, ">")))
-			throw("ligne invalide: " + line);
+			throw ParsingError("ligne invalide: " + line);
 
 		line.erase(0, 1);
 		line.erase(line.length()-1, 1);
@@ -62,7 +72,7 @@ void GraphConstructor::analyseFile(DependencyGraph& graph, const boost::filesyst
 			path = boost::filesystem::path(dir.generic_string() + "/" + path.generic_string());
 			if(!boost::filesystem::exists(path))
 			{
-				cerr << "toujours pas trouvé!" << endl;
+				cerr << "toujours pas trouvé: " << path.generic_string() << endl;
 				path = boost::filesystem::path(line);
 			}
 		}
@@ -70,4 +80,12 @@ void GraphConstructor::analyseFile(DependencyGraph& graph, const boost::filesyst
 		if(StringHelper::startsWith(newFile, "./")) newFile.erase(0, 2);
 		graph.addLien(newFile, fileName);
 	}
+}
+
+void GraphConstructor::cleanUpLine(std::string& line)
+{
+	std::size_t pos = line.find("//");
+	if(pos != std::string::npos)
+		line.erase(pos);
+	line = StringHelper::trim(line);
 }
