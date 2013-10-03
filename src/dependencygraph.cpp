@@ -94,8 +94,7 @@ bool DependencyGraph::areLinked(vertex_descriptor v1, vertex_descriptor v2) cons
 DependencyGraph::label_writer::label_writer(const DependencyGraph & sr) : d_sr(sr) {
 }
 void DependencyGraph::label_writer::operator()(std::ostream& out, const boost::graph_traits<Reseau>::vertex_descriptor& v) const {
-	out << "[label=\"" << createLabel(v) << "\"";
-	out << "]";
+	out << "[label=\"" << createLabel(v) << "\"]";
 }
 
 std::string DependencyGraph::label_writer::createLabel(const boost::graph_traits<Reseau>::vertex_descriptor& v) const {
