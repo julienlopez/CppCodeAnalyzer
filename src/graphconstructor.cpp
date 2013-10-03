@@ -3,20 +3,26 @@
 
 #include <fstream>
 
-using namespace std;
-
 StringHelper::type_vector_string GraphConstructor::s_extensions = {"h", "hpp", "h++", "c", "cc", "cpp"};
 
-GraphConstructor::ParsingError::ParsingError(const std::string& message): std::exception(), m_message(message)
+GraphConstructor::type_vector_path GraphConstructor::s_includePaths;
+
+GraphConstructor::ParsingError::ParsingError(const std::string& mess): Exception(mess)
 {}
 
-const char* GraphConstructor::ParsingError::what() const noexcept
-{
-	return m_message.c_str();
-}
+GraphConstructor::ParsingError::ParsingError(std::string&& mess): Exception(std::move(mess))
+{}
 
-void GraphConstructor::buildGraph(DependencyGraph& graph, const boost::filesystem::path& p)
+GraphConstructor::FileNotFound::FileNotFound(const std::string& mess): Exception(mess)
+{}
+
+GraphConstructor::FileNotFound::FileNotFound(std::string&& mess): Exception(std::move(mess))
+{}
+
+void GraphConstructor::buildGraph(DependencyGraph& graph, const boost::filesystem::path& p, const StringHelper::type_vector_string& includePaths)
 {
+	s_includePaths.resize(includePaths.size());
+	std::transform(includePaths.begin(), includePaths.end(), s_includePaths.begin(), [&p](const std::string& pathStr){ return p / boost::filesystem::path(pathStr);});
 	browseDirectory(graph, p);
 }
 
@@ -49,8 +55,10 @@ void GraphConstructor::analyseFile(DependencyGraph& graph, const boost::filesyst
 
 	std::string fileName = p.generic_string();
 	if(StringHelper::startsWith(fileName, "./")) fileName.erase(0, 2);
-	ifstream f(p.generic_string().c_str(), ios::in);
+	std::ifstream f(p.generic_string().c_str(), std::ios::in);
 	if(!f) throw std::invalid_argument("Impossible d'ouvrir le fichier " + p.generic_string());
+
+	graph.addNoeud(fileName);
 
 	std::string line;
 	while(std::getline(f, line))
@@ -61,7 +69,7 @@ void GraphConstructor::analyseFile(DependencyGraph& graph, const boost::filesyst
         cleanUpLine(line);
 
 		if(!(StringHelper::startsWith(line, "\"") && StringHelper::endsWith(line, "\"")) && !(StringHelper::startsWith(line, "<") && StringHelper::endsWith(line, ">")))
-			throw ParsingError("ligne invalide: " + line);
+			throw ParsingError("invalid line: " + line);
 
 		line.erase(0, 1);
 		line.erase(line.length()-1, 1);
@@ -69,12 +77,14 @@ void GraphConstructor::analyseFile(DependencyGraph& graph, const boost::filesyst
 		boost::filesystem::path path(line);
 		if(!boost::filesystem::exists(path))
 		{
-			path = boost::filesystem::path(dir.generic_string() + "/" + path.generic_string());
-			if(!boost::filesystem::exists(path))
+			boost::filesystem::path localPath = dir / path;
+			if(!boost::filesystem::exists(localPath)) 
 			{
-				cerr << "toujours pas trouvé: " << path.generic_string() << endl;
-				path = boost::filesystem::path(line);
+				localPath = findFileInIncludeDirs(path);
+				if(localPath.empty())
+					throw FileNotFound("unable to find included file: " + path.generic_string());
 			}
+			path = localPath;
 		}
 		std::string newFile = path.generic_string();
 		if(StringHelper::startsWith(newFile, "./")) newFile.erase(0, 2);
@@ -88,4 +98,15 @@ void GraphConstructor::cleanUpLine(std::string& line)
 	if(pos != std::string::npos)
 		line.erase(pos);
 	line = StringHelper::trim(line);
+}
+
+boost::filesystem::path GraphConstructor::findFileInIncludeDirs(const boost::filesystem::path& file)
+{
+	for(const auto path : s_includePaths)
+	{
+		boost::filesystem::path p = path / file;
+		if(boost::filesystem::exists(p))
+			return p;
+	}
+	return boost::filesystem::path();
 }

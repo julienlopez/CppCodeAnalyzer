@@ -46,7 +46,14 @@ void TestGraphConstructor::testOneFolderThreeFilesNoIclusion()
 
 	DependencyGraph::vertex_iterator i, i_end;
 	std::tie(i, i_end) = graph.vertices();
-	CPPUNIT_ASSERT_EQUAL(0, (int)std::distance(i, i_end));
+	CPPUNIT_ASSERT_EQUAL(3, (int)std::distance(i, i_end));
+
+	DependencyGraph::vertex_iterator i_test_cpp = std::find_if(i, i_end, CompareGraphVertexByFilePath(graph, "base/test.cpp"));
+	CPPUNIT_ASSERT(i_test_cpp != i_end);
+	DependencyGraph::vertex_iterator i_main_cpp = std::find_if(i, i_end, CompareGraphVertexByFilePath(graph, "base/main.cpp"));
+	CPPUNIT_ASSERT(i_main_cpp != i_end);
+	DependencyGraph::vertex_iterator i_foo_cpp = std::find_if(i, i_end, CompareGraphVertexByFilePath(graph, "base/foo.cpp"));
+	CPPUNIT_ASSERT(i_foo_cpp != i_end);
 }
 
 void TestGraphConstructor::testOneFolderThreeFiles()
@@ -96,6 +103,52 @@ void TestGraphConstructor::testOneFolderOneSubFolderThreeFiles()
 	CPPUNIT_ASSERT(graph.areLinked(*i_test_hpp, *i_test_cpp));
 }
 
+void TestGraphConstructor::testIncludeLineInvalid()
+{
+	createFileWithContent(m_dir_base, "main.cpp", "#include blah.hpp");
+	DependencyGraph graph;
+	try 
+	{
+		GraphConstructor::buildGraph(graph, m_dir_base);
+		CPPUNIT_FAIL("no exception was thrown");
+	}
+	catch(GraphConstructor::ParsingError& e)
+	{
+		CPPUNIT_ASSERT_EQUAL(std::string("invalid line: blah.hpp"), std::string(e.what()));
+	}
+	catch(...) 
+	{
+		CPPUNIT_FAIL("an exception was thrown, but not of type GraphConstructor::ParsingError");
+	}
+}
+
+void TestGraphConstructor::testSplitFoldersOneFileInEach()
+{
+	boost::filesystem::path subdirInclude = m_dir_base;
+	subdirInclude /= "include";
+	CPPUNIT_ASSERT_MESSAGE("unable to create directory", boost::filesystem::create_directory(subdirInclude));
+	boost::filesystem::path subdirSrc = m_dir_base;
+	subdirSrc /= "src";
+	CPPUNIT_ASSERT_MESSAGE("unable to create directory", boost::filesystem::create_directory(subdirSrc));
+
+	createEmptyFile(subdirInclude, "header.hpp");
+	createFile(subdirSrc, "main.cpp", {{"header.hpp"}});
+
+	DependencyGraph graph;
+	CPPUNIT_ASSERT_NO_THROW(GraphConstructor::buildGraph(graph, m_dir_base, {{"include"}}));
+
+	DependencyGraph::vertex_iterator i, i_end;
+	std::tie(i, i_end) = graph.vertices();
+	CPPUNIT_ASSERT_EQUAL(2, (int)std::distance(i, i_end));
+
+	DependencyGraph::vertex_iterator i_header_hpp = std::find_if(i, i_end, CompareGraphVertexByFilePath(graph, "base/include/header.hpp"));
+	CPPUNIT_ASSERT(i_header_hpp != i_end);
+	DependencyGraph::vertex_iterator i_main_cpp = std::find_if(i, i_end, CompareGraphVertexByFilePath(graph, "base/src/main.cpp"));
+	CPPUNIT_ASSERT(i_main_cpp != i_end);
+
+	CPPUNIT_ASSERT(graph.areLinked(*i_header_hpp, *i_main_cpp));
+}
+
 void TestGraphConstructor::createEmptyFile(boost::filesystem::path dir, const std::string& fileName)
 {
 	dir /= boost::filesystem::path(fileName);
@@ -111,4 +164,11 @@ void TestGraphConstructor::createFile(boost::filesystem::path dir, const std::st
 	{
 		ofs << "#include \"" << file << "\"\n";
 	}
+}
+
+void TestGraphConstructor::createFileWithContent(boost::filesystem::path dir, const std::string& fileName, const std::string& text)
+{
+	dir /= boost::filesystem::path(fileName);
+	std::ofstream ofs(dir.generic_string().c_str());
+	ofs << text;
 }
