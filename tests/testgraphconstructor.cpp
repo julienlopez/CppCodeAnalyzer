@@ -1,4 +1,5 @@
 #include "testgraphconstructor.hpp"
+#include "utils_tests.hpp"
 
 #include <graphconstructor.hpp>
 
@@ -26,7 +27,7 @@ namespace {
 
 		bool operator()(const DependencyGraph::vertex_descriptor v) const
 		{
-			return m_graph(v) == m_path;
+			return StringHelper::endsWith(m_graph(v), m_path) || StringHelper::endsWith(m_path, m_graph(v));
 		}
 
 	private:
@@ -37,9 +38,9 @@ namespace {
 
 void TestGraphConstructor::testOneFolderThreeFilesNoIclusion()
 {
-	createEmptyFile(m_dir_base, "main.cpp");
-	createEmptyFile(m_dir_base, "test.cpp");
-	createEmptyFile(m_dir_base, "foo.cpp");
+	utils_tests::createEmptyFile(m_dir_base, "main.cpp");
+	utils_tests::createEmptyFile(m_dir_base, "test.cpp");
+	utils_tests::createEmptyFile(m_dir_base, "foo.cpp");
 
 	DependencyGraph graph;
 	CPPUNIT_ASSERT_NO_THROW(GraphConstructor::buildGraph(graph, m_dir_base));
@@ -58,9 +59,9 @@ void TestGraphConstructor::testOneFolderThreeFilesNoIclusion()
 
 void TestGraphConstructor::testOneFolderThreeFiles()
 {
-	createFile(m_dir_base, "main.cpp", {{"test.hpp"}});
-	createFile(m_dir_base, "test.cpp", {{"test.hpp"}});
-	createEmptyFile(m_dir_base, "test.hpp");
+	utils_tests::createFile(m_dir_base, "main.cpp", {{"test.hpp"}});
+	utils_tests::createFile(m_dir_base, "test.cpp", {{"test.hpp"}});
+	utils_tests::createEmptyFile(m_dir_base, "test.hpp");
 
 	DependencyGraph graph;
 	CPPUNIT_ASSERT_NO_THROW(GraphConstructor::buildGraph(graph, m_dir_base));
@@ -83,9 +84,9 @@ void TestGraphConstructor::testOneFolderOneSubFolderThreeFiles()
 	boost::filesystem::path subdir = m_dir_base;
 	subdir /= "subdir";
 	CPPUNIT_ASSERT_MESSAGE("unable to create directory", boost::filesystem::create_directory(subdir));
-	createFile(m_dir_base, "main.cpp", {{"subdir/test.hpp"}});
-	createFile(subdir, "test.cpp", {{"test.hpp"}});
-	createEmptyFile(subdir, "test.hpp");
+	utils_tests::createFile(m_dir_base, "main.cpp", {{"subdir/test.hpp"}});
+	utils_tests::createFile(subdir, "test.cpp", {{"test.hpp"}});
+	utils_tests::createEmptyFile(subdir, "test.hpp");
 
 	DependencyGraph graph;
 	CPPUNIT_ASSERT_NO_THROW(GraphConstructor::buildGraph(graph, m_dir_base));
@@ -105,7 +106,7 @@ void TestGraphConstructor::testOneFolderOneSubFolderThreeFiles()
 
 void TestGraphConstructor::testIncludeLineInvalid()
 {
-	createFileWithContent(m_dir_base, "main.cpp", "#include blah.hpp");
+	utils_tests::createFileWithContent(m_dir_base, "main.cpp", "#include blah.hpp");
 	DependencyGraph graph;
 	try 
 	{
@@ -124,15 +125,13 @@ void TestGraphConstructor::testIncludeLineInvalid()
 
 void TestGraphConstructor::testSplitFoldersOneFileInEach()
 {
-	boost::filesystem::path subdirInclude = m_dir_base;
-	subdirInclude /= "include";
+	boost::filesystem::path subdirInclude = m_dir_base / "include";
 	CPPUNIT_ASSERT_MESSAGE("unable to create directory", boost::filesystem::create_directory(subdirInclude));
-	boost::filesystem::path subdirSrc = m_dir_base;
-	subdirSrc /= "src";
+	boost::filesystem::path subdirSrc = m_dir_base = "src";
 	CPPUNIT_ASSERT_MESSAGE("unable to create directory", boost::filesystem::create_directory(subdirSrc));
 
-	createEmptyFile(subdirInclude, "header.hpp");
-	createFile(subdirSrc, "main.cpp", {{"header.hpp"}});
+	utils_tests::createEmptyFile(subdirInclude, "header.hpp");
+	utils_tests::createFile(subdirSrc, "main.cpp", {{"header.hpp"}});
 
 	DependencyGraph graph;
 	CPPUNIT_ASSERT_NO_THROW(GraphConstructor::buildGraph(graph, m_dir_base, {{"include"}}));
@@ -147,28 +146,4 @@ void TestGraphConstructor::testSplitFoldersOneFileInEach()
 	CPPUNIT_ASSERT(i_main_cpp != i_end);
 
 	CPPUNIT_ASSERT(graph.areLinked(*i_header_hpp, *i_main_cpp));
-}
-
-void TestGraphConstructor::createEmptyFile(boost::filesystem::path dir, const std::string& fileName)
-{
-	dir /= boost::filesystem::path(fileName);
-	std::ofstream ofs(dir.generic_string().c_str());
-	ofs << "\n";
-}
-
-void TestGraphConstructor::createFile(boost::filesystem::path dir, const std::string& fileName, const std::list<std::string>& includes)
-{
-	dir /= boost::filesystem::path(fileName);
-	std::ofstream ofs(dir.generic_string().c_str());
-	for(const auto& file : includes)
-	{
-		ofs << "#include \"" << file << "\"\n";
-	}
-}
-
-void TestGraphConstructor::createFileWithContent(boost::filesystem::path dir, const std::string& fileName, const std::string& text)
-{
-	dir /= boost::filesystem::path(fileName);
-	std::ofstream ofs(dir.generic_string().c_str());
-	ofs << text;
 }

@@ -49,7 +49,6 @@ private:
 
   typedef std::set<std::pair<std::string, std::string> > type_linkPost;
   type_linkPost d_link;
-
 };
 
 #endif // __DEPENDENCYGRAPH_HPP__
