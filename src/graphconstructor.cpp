@@ -7,6 +7,7 @@ StringHelper::type_vector_string GraphConstructor::s_extensions = {"h", "hpp", "
 
 GraphConstructor::type_vector_path GraphConstructor::s_includePaths;
 
+/*
 GraphConstructor::ParsingError::ParsingError(const std::string& mess): Exception(mess)
 {}
 
@@ -18,11 +19,12 @@ GraphConstructor::FileNotFound::FileNotFound(const std::string& mess): Exception
 
 GraphConstructor::FileNotFound::FileNotFound(std::string&& mess): Exception(std::move(mess))
 {}
+*/
 
 void GraphConstructor::buildGraph(DependencyGraph& graph, const boost::filesystem::path& p, const StringHelper::type_vector_string& includePaths)
 {
 	s_includePaths.resize(includePaths.size());
-	std::transform(includePaths.begin(), includePaths.end(), s_includePaths.begin(), [&p](const std::string& pathStr){ return boost::filesystem::absolute(boost::filesystem::path(pathStr));});
+	std::transform(includePaths.begin(), includePaths.end(), s_includePaths.begin(), [](const std::string& includePath){ return boost::filesystem::absolute(includePath); });
 	browseDirectory(graph, p);
 }
 
@@ -56,7 +58,7 @@ void GraphConstructor::analyseFile(DependencyGraph& graph, const boost::filesyst
 	std::ifstream f(p.generic_string().c_str(), std::ios::in);
 	if(!f) throw std::invalid_argument("Unable to open file " + p.generic_string());
 
-	graph.addNoeud(fileName);
+	graph.addNoeud(boost::filesystem::absolute(fileName));
 
 	std::string line;
 	while(std::getline(f, line))
@@ -96,7 +98,7 @@ void GraphConstructor::analyseFile(DependencyGraph& graph, const boost::filesyst
 		}
 		std::string newFile = path.generic_string();
 		if(StringHelper::startsWith(newFile, "./")) newFile.erase(0, 2);
-		graph.addLien(newFile, fileName);
+		graph.addLien(boost::filesystem::absolute(newFile), boost::filesystem::absolute(fileName));
 	}
 }
 
@@ -110,7 +112,7 @@ void GraphConstructor::cleanUpLine(std::string& line)
 
 boost::filesystem::path GraphConstructor::findFileInIncludeDirs(const boost::filesystem::path& file)
 {
-	for(const auto path : s_includePaths)
+	for(const auto& path : s_includePaths)
 	{
 		boost::filesystem::path p = path / file;
 		if(boost::filesystem::exists(p))

@@ -3,26 +3,27 @@
 
 #include <string>
 #include <boost/graph/adjacency_list.hpp>
+#include <boost/filesystem/path.hpp>
 
 class DependencyGraph
 {
 public:
-  typedef std::string Noeud;
-  typedef boost::adjacency_list<boost::listS, boost::vecS, boost::bidirectionalS, std::string> Reseau;
-  typedef boost::graph_traits<Reseau>::vertex_descriptor vertex_descriptor;
-  typedef std::map<std::string, vertex_descriptor> type_map_vertex_descriptor;
-  typedef boost::graph_traits<Reseau>::vertex_iterator vertex_iterator;
-  typedef std::pair<vertex_iterator, vertex_iterator> type_pair_vertex_iterator;
+  using type_noeud = boost::filesystem::path;
+  using Reseau = boost::adjacency_list<boost::listS, boost::vecS, boost::bidirectionalS, type_noeud>;
+  using vertex_descriptor = boost::graph_traits<Reseau>::vertex_descriptor;
+  using type_map_vertex_descriptor = std::map<type_noeud, vertex_descriptor>;
+  using vertex_iterator = boost::graph_traits<Reseau>::vertex_iterator;
+  using type_pair_vertex_iterator = std::pair<vertex_iterator, vertex_iterator>;
 
 	DependencyGraph();
 
 	void print(std::ostream& o) const;
 
-  void addNoeud(const std::string& noeud);
+  void addNoeud(const type_noeud& noeud);
 
-  void addLien(const std::string& depart, const std::string& arrivee);
+  void addLien(const type_noeud& depart, const type_noeud& arrivee);
 
-  std::string operator()(vertex_descriptor v) const;
+  const type_noeud& operator()(vertex_descriptor v) const;
 
   type_pair_vertex_iterator vertices() const;
 
@@ -32,7 +33,7 @@ public:
 
 private:
 
-  typedef boost::graph_traits<Reseau>::in_edge_iterator in_edge_iterator;
+  using in_edge_iterator = boost::graph_traits<Reseau>::in_edge_iterator;
 
   Reseau d_reseau;
   type_map_vertex_descriptor d_mid2vertex;
@@ -47,7 +48,7 @@ private:
 			std::string createLabel(const boost::graph_traits<Reseau>::vertex_descriptor& v) const;
   };
 
-  typedef std::set<std::pair<std::string, std::string> > type_linkPost;
+  using type_linkPost = std::set<std::pair<type_noeud, type_noeud>>;
   type_linkPost d_link;
 };
 

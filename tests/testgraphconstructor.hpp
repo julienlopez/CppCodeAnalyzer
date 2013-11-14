@@ -16,7 +16,7 @@ class TestGraphConstructor : public CppUnit::TestFixture
 	CPPUNIT_TEST(testOneFolderThreeFilesNoIclusion);
 	CPPUNIT_TEST(testOneFolderThreeFiles);
 	CPPUNIT_TEST(testOneFolderOneSubFolderThreeFiles);
-	CPPUNIT_TEST(testIncludeLineInvalid);
+	//CPPUNIT_TEST(testIncludeLineInvalid);
 	CPPUNIT_TEST(testSplitFoldersOneFileInEach);
 	CPPUNIT_TEST_SUITE_END();
 
@@ -30,7 +30,7 @@ public:
 	void testOneFolderThreeFiles();
 	void testOneFolderOneSubFolderThreeFiles();
 
-	void testIncludeLineInvalid();
+	//void testIncludeLineInvalid();
 
 	/**
 	* Test the result of analyzing the following setup:

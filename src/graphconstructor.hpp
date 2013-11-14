@@ -17,10 +17,11 @@ class GraphConstructor
 	public:
 		static StringHelper::type_vector_string s_extensions;
 
+/*
 		class ParsingError : public Exception
 		{
 		public:
-			ParsingError(const std::string& mess) /*noexcept(Exception::Exception())*/;
+			ParsingError(const std::string& mess);
 			ParsingError(std::string&& mess);
 
 			virtual ~ParsingError() noexcept = default;
@@ -34,6 +35,7 @@ class GraphConstructor
 
 			virtual ~FileNotFound() noexcept = default;
 		};
+*/
 
 		static void buildGraph(DependencyGraph& graph, const boost::filesystem::path& p, const StringHelper::type_vector_string& includePaths = StringHelper::type_vector_string());
 

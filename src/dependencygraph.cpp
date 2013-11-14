@@ -11,7 +11,7 @@ void DependencyGraph::print(std::ostream& o) const {
     boost::write_graphviz(o, d_reseau, label_writer(*this));
 }
 
-void DependencyGraph::addNoeud(const std::string& noeud) {
+void DependencyGraph::addNoeud(const DependencyGraph::type_noeud& noeud) {
     boost::graph_traits<Reseau>::vertex_descriptor v;
     type_map_vertex_descriptor::iterator i_v;
     i_v = d_mid2vertex.find(noeud);
@@ -22,7 +22,7 @@ void DependencyGraph::addNoeud(const std::string& noeud) {
 	}
 }
 
-void DependencyGraph::addLien(const std::string& depart, const std::string& arrivee) {
+void DependencyGraph::addLien(const DependencyGraph::type_noeud& depart, const DependencyGraph::type_noeud& arrivee) {
 	addNoeud(depart);
 	addNoeud(arrivee);
 	type_map_vertex_descriptor::iterator ifrom = d_mid2vertex.find(depart);
@@ -40,7 +40,7 @@ void DependencyGraph::addLien(const std::string& depart, const std::string& arri
 	}
 }
 
-std::string DependencyGraph::operator()(vertex_descriptor v) const
+const DependencyGraph::type_noeud& DependencyGraph::operator()(vertex_descriptor v) const
 {
 	return d_reseau[v];
 }
@@ -98,5 +98,5 @@ void DependencyGraph::label_writer::operator()(std::ostream& out, const boost::g
 }
 
 std::string DependencyGraph::label_writer::createLabel(const boost::graph_traits<Reseau>::vertex_descriptor& v) const {
-	return d_sr.d_reseau[v];;
+	return d_sr.d_reseau[v].generic_string();
 }
