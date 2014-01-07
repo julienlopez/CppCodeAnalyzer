@@ -1,3 +1,4 @@
-bin/*
-build_tests/*
-build_tools/*
+bin
+build
+build_tests
+build_tools

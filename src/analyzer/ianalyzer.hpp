@@ -1,7 +1,7 @@
 #ifndef __IANALYZER_HPP__
 #define __IANALYZER_HPP__
 
-#include <iostream>
+#include <iosfwd>
 
 class DependencyGraph;
 

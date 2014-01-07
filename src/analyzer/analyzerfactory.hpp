@@ -10,7 +10,7 @@ class DependencyGraph;
 class AnalyzerFactory : public utils::noninstanciable
 {
 public:
-	typedef utils::AbstractFactory<iAnalyzer, std::string, iAnalyzer*(*)(const DependencyGraph&)> type_factory;
+	typedef utils::AbstractFactory<iAnalyzer, std::string, const DependencyGraph&, iAnalyzer*(*)(const DependencyGraph&)> type_factory;
 
 	static iAnalyzer* createAnalyzer(const std::string& analyzerName, const DependencyGraph& graph);
 };

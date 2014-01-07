@@ -12,10 +12,11 @@ BEGIN_NAMESPACE_UTILS
 
 template<	class AbstractProduct,
 			class IdentifierType,
+			class ConstructorParameter,
 			class ProductCreator = AbstractProduct*(*)(),
 			template<typename, class> class FactoryErrorPolicy = DefaultFactoryErrorPolicy
 			>
-class AbstractFactory : public FactoryErrorPolicy<IdentifierType, AbstractProduct>, public Singleton<AbstractFactory<AbstractProduct, IdentifierType, ProductCreator, FactoryErrorPolicy> >
+class AbstractFactory : public FactoryErrorPolicy<IdentifierType, AbstractProduct>, public Singleton<AbstractFactory<AbstractProduct, IdentifierType, ConstructorParameter, ProductCreator, FactoryErrorPolicy> >
 {
 public:
     typedef FactoryErrorPolicy<IdentifierType, AbstractProduct> error_policy;
@@ -27,10 +28,10 @@ public:
         return error_policy::onUnknownType(id);
 	}
 
-    AbstractProduct* create(typename const_parameter_trait<IdentifierType>::type id, const DependencyGraph& graph)
+    AbstractProduct* create(typename const_parameter_trait<IdentifierType>::type id, ConstructorParameter param)
 	{
 		typename AssocMap::const_iterator i = m_associations.find(id);
-        if(i != m_associations.end()) return (i->second)(graph);
+        if(i != m_associations.end()) return (i->second)(param);
         return error_policy::onUnknownType(id);
 	}
 	

@@ -63,8 +63,8 @@ void GraphConstructor::analyseFile(DependencyGraph& graph, const boost::filesyst
 	std::string line;
 	while(std::getline(f, line))
 	{
-        if(!StringHelper::startsWith(line, "#include ")) continue;
-        line.erase(0, 9);
+        if(!StringHelper::startsWith(line, "#include")) continue;
+        line.erase(0, 8);
 
         cleanUpLine(line);
 
