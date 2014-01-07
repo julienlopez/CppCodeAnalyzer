@@ -14,18 +14,15 @@ mkdir $BUILD_DIR && cd $BUILD_DIR && cmake ../tests -G"Unix Makefiles" && make V
 
 [ $? -ne 0 ] && error_exit "Compile step failed."
 
-lcov --zerocounters --directory $OBJ_DIR > lcov.log 2> lcov.err
-lcov --capture --initial --directory $OBJ_DIR --output-file app >> lcov.log 2>> lcov.err
+lcov --zerocounters --directory $OBJ_DIR --no-external > lcov.log 2> lcov.err
+lcov --capture --initial --directory $OBJ_DIR --no-external --output-file app >> lcov.log 2>> lcov.err
 
 ../bin/tests
 
 echo "analyzing coverage data..."
 
-lcov --no-checksum --directory $OBJ_DIR --capture --output-file app.info >> lcov.log 2>> lcov.err
+lcov --no-checksum --directory $OBJ_DIR --directory ../src --no-external --capture --output-file app.info >> lcov.log 2>> lcov.err
 genhtml -o html app.info >> lcov.log 2>> lcov.err
-
-cp html/index.html html/index.html.bak
-../bin/lcovHTMLcleaner html/index.html
 
 echo "done!"
 
