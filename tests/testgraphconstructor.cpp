@@ -1,6 +1,7 @@
 #include "testgraphconstructor.hpp"
 #include "utils_tests.hpp"
 
+#include <dependencygraph.hpp>
 #include <graphconstructor.hpp>
 
 #include <fstream>
@@ -45,10 +46,10 @@ void TestGraphConstructor::testOneFolderThreeFilesNoIclusion()
 	DependencyGraph graph;
 	CPPUNIT_ASSERT_NO_THROW(GraphConstructor::buildGraph(graph, m_dir_base));
 
+	CPPUNIT_ASSERT_EQUAL((std::size_t)3, graph.count());
+
 	DependencyGraph::vertex_iterator i, i_end;
 	std::tie(i, i_end) = graph.vertices();
-	CPPUNIT_ASSERT_EQUAL(3, (int)std::distance(i, i_end));
-
 	DependencyGraph::vertex_iterator i_test_cpp = std::find_if(i, i_end, CompareGraphVertexByFilePath(graph, "base/test.cpp"));
 	CPPUNIT_ASSERT(i_test_cpp != i_end);
 	DependencyGraph::vertex_iterator i_main_cpp = std::find_if(i, i_end, CompareGraphVertexByFilePath(graph, "base/main.cpp"));
@@ -66,9 +67,10 @@ void TestGraphConstructor::testOneFolderThreeFiles()
 	DependencyGraph graph;
 	CPPUNIT_ASSERT_NO_THROW(GraphConstructor::buildGraph(graph, m_dir_base));
 
+	CPPUNIT_ASSERT_EQUAL((std::size_t)3, graph.count());
+
 	DependencyGraph::vertex_iterator i, i_end;
 	std::tie(i, i_end) = graph.vertices();
-	CPPUNIT_ASSERT_EQUAL(3, (int)std::distance(i, i_end));
 	DependencyGraph::vertex_iterator i_test_hpp = std::find_if(i, i_end, CompareGraphVertexByFilePath(graph, "base/test.hpp"));
 	CPPUNIT_ASSERT(i_test_hpp != i_end);
 	DependencyGraph::vertex_iterator i_test_cpp = std::find_if(i, i_end, CompareGraphVertexByFilePath(graph, "base/test.cpp"));
@@ -91,9 +93,10 @@ void TestGraphConstructor::testOneFolderOneSubFolderThreeFiles()
 	DependencyGraph graph;
 	CPPUNIT_ASSERT_NO_THROW(GraphConstructor::buildGraph(graph, m_dir_base));
 
+	CPPUNIT_ASSERT_EQUAL((std::size_t)3, graph.count());
+
 	DependencyGraph::vertex_iterator i, i_end;
 	std::tie(i, i_end) = graph.vertices();
-	CPPUNIT_ASSERT_EQUAL(3, (int)std::distance(i, i_end));
 	DependencyGraph::vertex_iterator i_test_hpp = std::find_if(i, i_end, CompareGraphVertexByFilePath(graph, "base/subdir/test.hpp"));
 	CPPUNIT_ASSERT(i_test_hpp != i_end);
 	DependencyGraph::vertex_iterator i_test_cpp = std::find_if(i, i_end, CompareGraphVertexByFilePath(graph, "base/subdir/test.cpp"));
@@ -138,14 +141,26 @@ void TestGraphConstructor::testSplitFoldersOneFileInEach()
 	DependencyGraph graph;
 	CPPUNIT_ASSERT_NO_THROW(GraphConstructor::buildGraph(graph, m_dir_base, {{subdirInclude.generic_string()}}));
 
+	CPPUNIT_ASSERT_EQUAL((std::size_t)2, graph.count());
+
 	DependencyGraph::vertex_iterator i, i_end;
 	std::tie(i, i_end) = graph.vertices();
-	CPPUNIT_ASSERT_EQUAL(2, (int)std::distance(i, i_end));
-
 	DependencyGraph::vertex_iterator i_header_hpp = std::find_if(i, i_end, CompareGraphVertexByFilePath(graph, "base/include/header.hpp"));
 	CPPUNIT_ASSERT(i_header_hpp != i_end);
 	DependencyGraph::vertex_iterator i_main_cpp = std::find_if(i, i_end, CompareGraphVertexByFilePath(graph, "base/src/main.cpp"));
 	CPPUNIT_ASSERT(i_main_cpp != i_end);
 
 	CPPUNIT_ASSERT(graph.areLinked(*i_header_hpp, *i_main_cpp));
+}
+
+void TestGraphConstructor::testBothIncludeWithOrWithoutSpaceIsOk()
+{
+	utils_tests::createFileWithContent(m_dir_base, "main.cpp", "#include \"one.h\"\n#include\"two.h\"\n");
+	utils_tests::createEmptyFile(m_dir_base, "one.h");
+	utils_tests::createEmptyFile(m_dir_base, "two.h");
+
+	DependencyGraph graph;
+	CPPUNIT_ASSERT_NO_THROW(GraphConstructor::buildGraph(graph, m_dir_base));
+
+	CPPUNIT_ASSERT_EQUAL((std::size_t)3, graph.count());
 }

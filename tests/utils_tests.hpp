@@ -27,6 +27,11 @@ namespace utils_tests
 	* \param text the content of the file.
 	*/
 	void createFileWithContent(boost::filesystem::path dir, const std::string& fileName, const std::string& text);
+	
+	/**
+	* \brief read the content of a file and puts it in a string.
+	*/
+	std::string readFileAsAString(boost::filesystem::path dir, const std::string& fileName);
 }
 
 #endif

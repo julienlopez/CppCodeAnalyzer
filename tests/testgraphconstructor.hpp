@@ -1,8 +1,6 @@
 #ifndef __TESTGRAPHCONSTRUCTOR_HPP__
 #define __TESTGRAPHCONSTRUCTOR_HPP__
 
-#include <dependencygraph.hpp>
-
 #include <cppunit/extensions/HelperMacros.h>
 
 #include <boost/filesystem.hpp>
@@ -18,6 +16,7 @@ class TestGraphConstructor : public CppUnit::TestFixture
 	CPPUNIT_TEST(testOneFolderOneSubFolderThreeFiles);
 	//CPPUNIT_TEST(testIncludeLineInvalid);
 	CPPUNIT_TEST(testSplitFoldersOneFileInEach);
+	CPPUNIT_TEST(testBothIncludeWithOrWithoutSpaceIsOk);
 	CPPUNIT_TEST_SUITE_END();
 
 public:
@@ -42,6 +41,8 @@ public:
 	*     - main.cpp
 	*/
 	void testSplitFoldersOneFileInEach();
+
+	void testBothIncludeWithOrWithoutSpaceIsOk();
 
 private:
 	boost::filesystem::path m_dir_base;

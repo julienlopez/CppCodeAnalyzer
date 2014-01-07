@@ -11,36 +11,36 @@ void DependencyGraph::print(std::ostream& o) const {
     boost::write_graphviz(o, d_reseau, label_writer(*this));
 }
 
-void DependencyGraph::addNoeud(const DependencyGraph::type_noeud& noeud) {
+void DependencyGraph::addNoeud(const DependencyGraph::type_node& node) {
     boost::graph_traits<Reseau>::vertex_descriptor v;
     type_map_vertex_descriptor::iterator i_v;
-    i_v = d_mid2vertex.find(noeud);
+    i_v = d_mid2vertex.find(node);
 	if(i_v ==d_mid2vertex.end()) {
 		v = add_vertex(d_reseau);
-		d_reseau[v] = noeud;
-		d_mid2vertex[noeud] = v;
+		d_reseau[v] = node;
+		d_mid2vertex[node] = v;
 	}
 }
 
-void DependencyGraph::addLien(const DependencyGraph::type_noeud& depart, const DependencyGraph::type_noeud& arrivee) {
-	addNoeud(depart);
-	addNoeud(arrivee);
-	type_map_vertex_descriptor::iterator ifrom = d_mid2vertex.find(depart);
+void DependencyGraph::addLien(const DependencyGraph::type_node& from, const DependencyGraph::type_node& to) {
+	addNoeud(from);
+	addNoeud(to);
+	type_map_vertex_descriptor::iterator ifrom = d_mid2vertex.find(from);
 	if(ifrom != d_mid2vertex.end()) {
-		type_map_vertex_descriptor::iterator ito = d_mid2vertex.find(arrivee);
+		type_map_vertex_descriptor::iterator ito = d_mid2vertex.find(to);
 		if(ito!=d_mid2vertex.end()) {
-		    if(d_link.find(std::make_pair(depart,arrivee))==d_link.end()) {
+		    if(d_link.find(std::make_pair(from,to))==d_link.end()) {
 		    	boost::graph_traits<Reseau>::vertex_descriptor v1 = ifrom->second;
 		    	boost::graph_traits<Reseau>::vertex_descriptor v2 = ito->second;
 		    	add_edge(v1,v2,d_reseau);
-		    	d_link.insert(std::make_pair(depart,arrivee));
+		    	d_link.insert(std::make_pair(from,to));
 		    }
 		    return;
 		}
 	}
 }
 
-const DependencyGraph::type_noeud& DependencyGraph::operator()(vertex_descriptor v) const
+const DependencyGraph::type_node& DependencyGraph::operator()(vertex_descriptor v) const
 {
 	return d_reseau[v];
 }
@@ -89,6 +89,12 @@ bool DependencyGraph::areLinked(vertex_descriptor v1, vertex_descriptor v2) cons
 	custom_bfs_visitor<DependencyGraph> vis(v2, found);
   	breadth_first_search(d_reseau, v1, visitor(vis));
   	return found;
+}
+
+std::size_t DependencyGraph::count() const
+{
+	auto its = vertices();
+	return std::distance(its.first, its.second);
 }
 
 DependencyGraph::label_writer::label_writer(const DependencyGraph & sr) : d_sr(sr) {
