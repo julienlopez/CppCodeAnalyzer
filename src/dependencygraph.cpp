@@ -91,10 +91,31 @@ bool DependencyGraph::areLinked(vertex_descriptor v1, vertex_descriptor v2) cons
   	return found;
 }
 
-std::size_t DependencyGraph::count() const
+std::size_t DependencyGraph::countVertices() const
 {
 	auto its = vertices();
 	return std::distance(its.first, its.second);
+}
+
+std::size_t DependencyGraph::countEdges() const
+{
+	auto its = edges();
+	return std::distance(its.first, its.second);
+}
+
+DependencyGraph::type_pair_edge_iterator DependencyGraph::edges() const
+{
+	return boost::edges(d_reseau);
+}
+
+DependencyGraph::vertex_descriptor DependencyGraph::source(edge_descriptor e) const
+{
+	return boost::source(e, d_reseau);
+}
+
+DependencyGraph::vertex_descriptor DependencyGraph::target(edge_descriptor e) const
+{
+	return boost::target(e, d_reseau);
 }
 
 DependencyGraph::label_writer::label_writer(const DependencyGraph & sr) : d_sr(sr) {

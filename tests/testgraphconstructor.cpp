@@ -46,7 +46,7 @@ void TestGraphConstructor::testOneFolderThreeFilesNoIclusion()
 	DependencyGraph graph;
 	CPPUNIT_ASSERT_NO_THROW(GraphConstructor::buildGraph(graph, m_dir_base));
 
-	CPPUNIT_ASSERT_EQUAL((std::size_t)3, graph.count());
+	CPPUNIT_ASSERT_EQUAL((std::size_t)3, graph.countVertices());
 
 	DependencyGraph::vertex_iterator i, i_end;
 	std::tie(i, i_end) = graph.vertices();
@@ -67,7 +67,7 @@ void TestGraphConstructor::testOneFolderThreeFiles()
 	DependencyGraph graph;
 	CPPUNIT_ASSERT_NO_THROW(GraphConstructor::buildGraph(graph, m_dir_base));
 
-	CPPUNIT_ASSERT_EQUAL((std::size_t)3, graph.count());
+	CPPUNIT_ASSERT_EQUAL((std::size_t)3, graph.countVertices());
 
 	DependencyGraph::vertex_iterator i, i_end;
 	std::tie(i, i_end) = graph.vertices();
@@ -93,7 +93,7 @@ void TestGraphConstructor::testOneFolderOneSubFolderThreeFiles()
 	DependencyGraph graph;
 	CPPUNIT_ASSERT_NO_THROW(GraphConstructor::buildGraph(graph, m_dir_base));
 
-	CPPUNIT_ASSERT_EQUAL((std::size_t)3, graph.count());
+	CPPUNIT_ASSERT_EQUAL((std::size_t)3, graph.countVertices());
 
 	DependencyGraph::vertex_iterator i, i_end;
 	std::tie(i, i_end) = graph.vertices();
@@ -141,7 +141,7 @@ void TestGraphConstructor::testSplitFoldersOneFileInEach()
 	DependencyGraph graph;
 	CPPUNIT_ASSERT_NO_THROW(GraphConstructor::buildGraph(graph, m_dir_base, {{subdirInclude.generic_string()}}));
 
-	CPPUNIT_ASSERT_EQUAL((std::size_t)2, graph.count());
+	CPPUNIT_ASSERT_EQUAL((std::size_t)2, graph.countVertices());
 
 	DependencyGraph::vertex_iterator i, i_end;
 	std::tie(i, i_end) = graph.vertices();
@@ -162,5 +162,5 @@ void TestGraphConstructor::testBothIncludeWithOrWithoutSpaceIsOk()
 	DependencyGraph graph;
 	CPPUNIT_ASSERT_NO_THROW(GraphConstructor::buildGraph(graph, m_dir_base));
 
-	CPPUNIT_ASSERT_EQUAL((std::size_t)3, graph.count());
+	CPPUNIT_ASSERT_EQUAL((std::size_t)3, graph.countVertices());
 }

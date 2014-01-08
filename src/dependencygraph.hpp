@@ -10,10 +10,15 @@ class DependencyGraph
 public:
   using type_node = boost::filesystem::path;
   using Reseau = boost::adjacency_list<boost::listS, boost::vecS, boost::bidirectionalS, type_node>;
+
   using vertex_descriptor = boost::graph_traits<Reseau>::vertex_descriptor;
-  using type_map_vertex_descriptor = std::map<type_node, vertex_descriptor>;
   using vertex_iterator = boost::graph_traits<Reseau>::vertex_iterator;
   using type_pair_vertex_iterator = std::pair<vertex_iterator, vertex_iterator>;
+  using type_map_vertex_descriptor = std::map<type_node, vertex_descriptor>;
+
+  using edge_descriptor = boost::graph_traits<Reseau>::edge_descriptor;
+  using edge_iterator = boost::graph_traits<Reseau>::edge_iterator;
+  using type_pair_edge_iterator = std::pair<edge_iterator, edge_iterator>;
 
 	DependencyGraph();
 
@@ -31,7 +36,15 @@ public:
 
   bool areLinked(vertex_descriptor v1, vertex_descriptor v2) const;
 
-  std::size_t count() const;
+  std::size_t countVertices() const;
+
+  std::size_t countEdges() const;
+
+  type_pair_edge_iterator edges() const;
+
+  vertex_descriptor source(edge_descriptor e) const;
+
+  vertex_descriptor target(edge_descriptor e) const;
 
 private:
 

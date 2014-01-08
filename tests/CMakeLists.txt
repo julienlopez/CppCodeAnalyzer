@@ -9,6 +9,9 @@ SET(CMAKE_EXE_LINKER_FLAGS "-g -O0 --coverage")
 
 include_directories(../src)
 
+include_directories(PATH_TO_ODGF)
+link_directories(PATH_TO_ODGF/_debug)
+
 file(GLOB_RECURSE source_files ../src/*)
 file(GLOB_RECURSE lst ../src/*)
 
@@ -29,4 +32,5 @@ target_link_libraries(tests
         boost_system 
         boost_filesystem
         cppunit
+        OGDF
 )

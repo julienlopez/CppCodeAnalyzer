@@ -9,6 +9,12 @@ SET(CMAKE_EXE_LINKER_FLAGS "-g")
 
 include_directories(.)
 
+include_directories(PATH_TO_ODGF)
+
+link_directories(PATH_TO_ODGF/_debug)
+link_directories(PATH_TO_COIN-OSI/lib)
+link_directories(PATH_TO_COIN-CLP/lib)
+
 file(
         GLOB_RECURSE
         source_files
@@ -23,4 +29,11 @@ target_link_libraries(
         boost_program_options 
         boost_system 
         boost_filesystem
+        OGDF
+        CoinUtils
+        Osi
+        OsiClp
+        Clp
+        z
+        lapack
 )
