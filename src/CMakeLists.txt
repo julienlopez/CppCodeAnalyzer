@@ -8,12 +8,11 @@ ADD_DEFINITIONS(-std=c++11 -g -Wall -Wextra -pedantic -Wshadow -Wpointer-arith -
 SET(CMAKE_EXE_LINKER_FLAGS "-g")
 
 include_directories(.)
+include_directories(${ogdf_include_directory})
 
-include_directories(PATH_TO_ODGF)
-
-link_directories(PATH_TO_ODGF/_debug)
-link_directories(PATH_TO_COIN-OSI/lib)
-link_directories(PATH_TO_COIN-CLP/lib)
+link_directories(${ogdf_lib_directory})
+link_directories(${coin-osi_lib_directory})
+link_directories(${coin-clp_lib_directory})
 
 file(
         GLOB_RECURSE

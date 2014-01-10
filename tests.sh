@@ -1,5 +1,7 @@
 #!/bin/bash
 
+source build_directories.sh
+
 BUILD_DIR=build_tests
 OBJ_DIR=CMakeFiles/tests.dir
 
@@ -10,7 +12,7 @@ function error_exit
 }
 
 [ -d "$BUILD_DIR" ] && rm -rf $BUILD_DIR
-mkdir $BUILD_DIR && cd $BUILD_DIR && cmake ../tests -G"Unix Makefiles" && make VERBOSE=1
+mkdir $BUILD_DIR && cd $BUILD_DIR && cmake ../tests -G"Unix Makefiles" -Dogdf_include_directory:PATH=$OGDF_INCLUDE_PATH -Dogdf_lib_directory:PATH=$OGDF_DEBUG_LIB_PATH && make VERBOSE=1
 
 [ $? -ne 0 ] && error_exit "Compile step failed."
 

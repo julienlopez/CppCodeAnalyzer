@@ -8,9 +8,9 @@ ADD_DEFINITIONS(-std=c++11 -g -O0 --coverage -Wall -Wextra -pedantic -Wshadow -W
 SET(CMAKE_EXE_LINKER_FLAGS "-g -O0 --coverage")
 
 include_directories(../src)
+include_directories(${ogdf_include_directory})
 
-include_directories(PATH_TO_ODGF)
-link_directories(PATH_TO_ODGF/_debug)
+link_directories(${ogdf_lib_directory})
 
 file(GLOB_RECURSE source_files ../src/*)
 file(GLOB_RECURSE lst ../src/*)
