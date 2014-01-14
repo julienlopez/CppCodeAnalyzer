@@ -1,12 +1,7 @@
-#include <stdlib.h>
-#include <cppunit/extensions/TestFactoryRegistry.h>
-#include <cppunit/ui/text/TestRunner.h>
+#include <gtest/gtest.h>
 
-int main()
+int main(int argc, char **argv)
 {
-	CppUnit::TextUi::TestRunner runner;
-	CppUnit::TestFactoryRegistry &registry = CppUnit::TestFactoryRegistry::getRegistry();
-	runner.addTest(registry.makeTest());
-	runner.run();
-	return EXIT_SUCCESS;
+	::testing::InitGoogleTest(&argc, argv);
+	return RUN_ALL_TESTS();
 }

@@ -1,44 +1,43 @@
-#include "teststringhelper.hpp"
+#include <gtest/gtest.h>
 
 #include <utils/stringhelper.hpp>
 
-CPPUNIT_TEST_SUITE_REGISTRATION(TestStringHelper);
-
-void TestStringHelper::testStartsWith()
+TEST(TestStringHelper, testStartsWith)
 {
 	std::string str = "Just a test";
-	CPPUNIT_ASSERT(StringHelper::startsWith(str, "Jus"));
-	CPPUNIT_ASSERT(!StringHelper::startsWith(str, "No"));
+	ASSERT_TRUE(StringHelper::startsWith(str, "Jus"));
+	ASSERT_TRUE(!StringHelper::startsWith(str, "No"));
 }
 
-void TestStringHelper::testEndsWith()
+TEST(TestStringHelper, testEndsWith)
 {
 	std::string str = "Just a test";
-	CPPUNIT_ASSERT(StringHelper::endsWith(str, "est"));
-	CPPUNIT_ASSERT(!StringHelper::endsWith(str, "te"));
+	ASSERT_TRUE(StringHelper::endsWith(str, "est"));
+	ASSERT_TRUE(!StringHelper::endsWith(str, "te"));
 }
 
-void TestStringHelper::testJoin()
+TEST(TestStringHelper, testJoin)
 {
 	StringHelper::type_vector_string strl {{"a"}, {"bc"}, {"d"}};
 	std::string res = StringHelper::join(strl);
-	CPPUNIT_ASSERT_EQUAL(std::string("a bc d"), res);
+	ASSERT_EQ(std::string("a bc d"), res);
 	res = StringHelper::join(strl, "");
-	CPPUNIT_ASSERT_EQUAL(std::string("abcd"), res);
-}
-void TestStringHelper::testContains()
-{
-	std::string str = "Just a test";
-	CPPUNIT_ASSERT(StringHelper::contains(str, "t a te"));
-	CPPUNIT_ASSERT(!StringHelper::contains(str, "tre"));
+	ASSERT_EQ(std::string("abcd"), res);
 }
 
-void TestStringHelper::testTrim()
+TEST(TestStringHelper, testContains)
+{
+	std::string str = "Just a test";
+	ASSERT_TRUE(StringHelper::contains(str, "t a te"));
+	ASSERT_TRUE(!StringHelper::contains(str, "tre"));
+}
+
+TEST(TestStringHelper, testTrim)
 {
 	std::string str("  \tto trim \t");
 	std::string res = StringHelper::trim(str);
-	CPPUNIT_ASSERT_EQUAL(std::string("to trim"), res);
+	ASSERT_EQ(std::string("to trim"), res);
 	str = "nothing to trim";
 	res = StringHelper::trim(str);
-	CPPUNIT_ASSERT_EQUAL(str, res);
+	ASSERT_EQ(str, res);
 }

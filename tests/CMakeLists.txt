@@ -31,6 +31,6 @@ target_link_libraries(tests
         boost_program_options 
         boost_system 
         boost_filesystem
-        cppunit
+        gtest
         OGDF
 )
