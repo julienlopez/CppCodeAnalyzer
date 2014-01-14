@@ -1,8 +1,6 @@
 #include "graphconstructor.hpp"
 #include "dependencygraph.hpp"
 
-#include <file/ifile.hpp>
-
 StringHelper::type_vector_string GraphConstructor::s_extensions = {"h", "hpp", "h++", "c", "cc", "cpp"};
 
 GraphConstructor::type_vector_path GraphConstructor::s_includePaths;
@@ -56,7 +54,7 @@ void GraphConstructor::analyseFile(DependencyGraph& graph, const boost::filesyst
 	std::string fileName = p.generic_string();
 	if(StringHelper::startsWith(fileName, "./")) fileName.erase(0, 2);
 
-	auto v = graph.addNoeud(boost::filesystem::absolute(fileName).generic_string());
+	auto v = graph.addNode(boost::filesystem::absolute(fileName).generic_string());
 	const auto& file = graph(v);
 	assert(file->isModifiable());
 
@@ -89,7 +87,7 @@ void GraphConstructor::analyseFile(DependencyGraph& graph, const boost::filesyst
 		}
 		std::string newFile = path.generic_string();
 		if(StringHelper::startsWith(newFile, "./")) newFile.erase(0, 2);
-		graph.addLien(newFile, fileName);
+		graph.addEdge(newFile, fileName);
 	}
 }
 

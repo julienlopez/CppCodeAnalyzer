@@ -7,59 +7,55 @@
 #include <boost/graph/graphviz.hpp>
 #include <boost/graph/breadth_first_search.hpp>
 
-#include <file/ifile.hpp>
 #include <file/filefactory.hpp>
 
 #include <utils/stringhelper.hpp>
 
-DependencyGraph::DependencyGraph()
-{}
-
 void DependencyGraph::print(std::ostream& o) const
 {
-    boost::write_graphviz(o, d_reseau, label_writer(*this));
+    boost::write_graphviz(o, d_graph, label_writer(*this));
 }
 
-DependencyGraph::vertex_descriptor DependencyGraph::addNoeud(const std::string& node)
+DependencyGraph::vertex_descriptor DependencyGraph::addNode(const std::string& node)
 {
     auto its = vertices();
-    auto i_v = std::find_if(its.first, its.second, [&node, this](DependencyGraph::vertex_descriptor v){ return StringHelper::endsWith(d_reseau[v]->filePath(), node); });
+    auto i_v = std::find_if(its.first, its.second, [&node, this](DependencyGraph::vertex_descriptor v){ return StringHelper::endsWith(d_graph[v]->filePath(), node); });
 	
 	if(i_v != its.second) 
 	return *i_v;
 
-	auto v = add_vertex(d_reseau);
-	d_reseau[v] = FileFactory::createFile(boost::filesystem::exists(node)?"Modifiable":"External", node);
+	auto v = add_vertex(d_graph);
+	d_graph[v] = FileFactory::createFile(boost::filesystem::exists(node)?"Modifiable":"External", node);
 	return v;
 }
 
-DependencyGraph::edge_descriptor DependencyGraph::addLien(const std::string& from, const std::string& to)
+DependencyGraph::edge_descriptor DependencyGraph::addEdge(const std::string& from, const std::string& to)
 {
-	auto v1 = addNoeud(from);
-	auto v2 = addNoeud(to);
+	auto v1 = addNode(from);
+	auto v2 = addNode(to);
 	
-	return add_edge(v1, v2, d_reseau).first;
+	return add_edge(v1, v2, d_graph).first;
 
 }
 
 const DependencyGraph::type_node& DependencyGraph::operator()(vertex_descriptor v) const
 {
-	return d_reseau[v];
+	return d_graph[v];
 }
 
 DependencyGraph::type_pair_vertex_iterator DependencyGraph::vertices() const
 {
-	return boost::vertices(d_reseau);
+	return boost::vertices(d_graph);
 }
 
 std::list<DependencyGraph::vertex_descriptor> DependencyGraph::parents(vertex_descriptor v) const
 {
 	std::list<DependencyGraph::vertex_descriptor> res;
 	in_edge_iterator i, i_end;
-	std::tie(i, i_end) = in_edges(v, d_reseau);
+	std::tie(i, i_end) = in_edges(v, d_graph);
 	for(; i != i_end; ++i)
 	{
-		res.push_back(boost::source(*i, d_reseau));
+		res.push_back(boost::source(*i, d_graph));
 	}
 	return res;
 }
@@ -89,7 +85,7 @@ bool DependencyGraph::areLinked(vertex_descriptor v1, vertex_descriptor v2) cons
 {
 	bool found = false;
 	custom_bfs_visitor<DependencyGraph> vis(v2, found);
-  	breadth_first_search(d_reseau, v1, visitor(vis));
+  	breadth_first_search(d_graph, v1, visitor(vis));
   	return found;
 }
 
@@ -107,25 +103,25 @@ std::size_t DependencyGraph::countEdges() const
 
 DependencyGraph::type_pair_edge_iterator DependencyGraph::edges() const
 {
-	return boost::edges(d_reseau);
+	return boost::edges(d_graph);
 }
 
 DependencyGraph::vertex_descriptor DependencyGraph::source(edge_descriptor e) const
 {
-	return boost::source(e, d_reseau);
+	return boost::source(e, d_graph);
 }
 
 DependencyGraph::vertex_descriptor DependencyGraph::target(edge_descriptor e) const
 {
-	return boost::target(e, d_reseau);
+	return boost::target(e, d_graph);
 }
 
 DependencyGraph::label_writer::label_writer(const DependencyGraph & sr) : d_sr(sr) {
 }
-void DependencyGraph::label_writer::operator()(std::ostream& out, const boost::graph_traits<Reseau>::vertex_descriptor& v) const {
+void DependencyGraph::label_writer::operator()(std::ostream& out, const boost::graph_traits<Graph>::vertex_descriptor& v) const {
 	out << "[label=\"" << createLabel(v) << "\"]";
 }
 
-std::string DependencyGraph::label_writer::createLabel(const boost::graph_traits<Reseau>::vertex_descriptor& v) const {
-	return d_sr.d_reseau[v]->filePath();
+std::string DependencyGraph::label_writer::createLabel(const boost::graph_traits<Graph>::vertex_descriptor& v) const {
+	return d_sr.d_graph[v]->filePath();
 }

@@ -5,8 +5,6 @@
 
 #include <dependencygraph.hpp>
 
-#include <file/ifile.hpp>
-
 BoostGraph2OGDFConverter::type_result BoostGraph2OGDFConverter::convert(const DependencyGraph& graph)
 {
 	up_graph G { new ogdf::Graph };

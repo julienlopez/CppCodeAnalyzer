@@ -14,8 +14,8 @@
 TEST(TestRedondantHeaderAnalyzer, testStraightInclusionOfThreeFiles)
 {
 	DependencyGraph graph;
-	graph.addLien("header1.hpp", "main.cpp");
-	graph.addLien("header2.hpp", "header1.hpp");
+	graph.addEdge("header1.hpp", "main.cpp");
+	graph.addEdge("header2.hpp", "header1.hpp");
 
 	std::unique_ptr<iAnalyzer> analyzer(AnalyzerFactory::createAnalyzer("RedondantHeaderAnalyzer", graph));
 	ASSERT_TRUE((bool)analyzer);
@@ -36,8 +36,8 @@ TEST(TestRedondantHeaderAnalyzer, testStraightInclusionOfThreeFiles)
 TEST(TestRedondantHeaderAnalyzer, testYShapedInclusionOfThreeFiles)
 {
 	DependencyGraph graph;
-	graph.addLien("header1.hpp", "main.cpp");
-	graph.addLien("header2.hpp", "main.cpp");
+	graph.addEdge("header1.hpp", "main.cpp");
+	graph.addEdge("header2.hpp", "main.cpp");
 
 	std::unique_ptr<iAnalyzer> analyzer(AnalyzerFactory::createAnalyzer("RedondantHeaderAnalyzer", graph));
 	ASSERT_TRUE((bool)analyzer);
@@ -58,10 +58,10 @@ TEST(TestRedondantHeaderAnalyzer, testYShapedInclusionOfThreeFiles)
 TEST(TestRedondantHeaderAnalyzer, testDiamondShapedInclusionOfFourFiles)
 {
 	DependencyGraph graph;
-	graph.addLien("header1.hpp", "main.cpp");
-	graph.addLien("header2.hpp", "main.cpp");
-	graph.addLien("global.hpp", "header1.hpp");
-	graph.addLien("global.hpp", "header2.hpp");
+	graph.addEdge("header1.hpp", "main.cpp");
+	graph.addEdge("header2.hpp", "main.cpp");
+	graph.addEdge("global.hpp", "header1.hpp");
+	graph.addEdge("global.hpp", "header2.hpp");
 
 	std::unique_ptr<iAnalyzer> analyzer(AnalyzerFactory::createAnalyzer("RedondantHeaderAnalyzer", graph));
 	ASSERT_TRUE((bool)analyzer);
@@ -82,11 +82,11 @@ TEST(TestRedondantHeaderAnalyzer, testDiamondShapedInclusionOfFourFiles)
 TEST(TestRedondantHeaderAnalyzer, testDiamondShapedInclusionOfFourFilesAndBottomAlsoIncludeTop)
 {
 	DependencyGraph graph;
-	graph.addLien("header1.hpp", "main.cpp");
-	graph.addLien("header2.hpp", "main.cpp");
-	graph.addLien("global.hpp", "header1.hpp");
-	graph.addLien("global.hpp", "header2.hpp");
-	graph.addLien("global.hpp", "main.cpp");
+	graph.addEdge("header1.hpp", "main.cpp");
+	graph.addEdge("header2.hpp", "main.cpp");
+	graph.addEdge("global.hpp", "header1.hpp");
+	graph.addEdge("global.hpp", "header2.hpp");
+	graph.addEdge("global.hpp", "main.cpp");
 
 	std::unique_ptr<iAnalyzer> analyzer(AnalyzerFactory::createAnalyzer("RedondantHeaderAnalyzer", graph));
 	ASSERT_TRUE((bool)analyzer);
@@ -108,9 +108,9 @@ TEST(TestRedondantHeaderAnalyzer, testDiamondShapedInclusionOfFourFilesAndBottom
 TEST(TestRedondantHeaderAnalyzer, testStraightInclusionOfThreeFilesWithTheBottomOneAlsoIncludingTop)
 {
 	DependencyGraph graph;
-	graph.addLien("header1.hpp", "main.cpp");
-	graph.addLien("header2.hpp", "header1.hpp");
-	graph.addLien("header2.hpp", "main.cpp");
+	graph.addEdge("header1.hpp", "main.cpp");
+	graph.addEdge("header2.hpp", "header1.hpp");
+	graph.addEdge("header2.hpp", "main.cpp");
 
 	std::unique_ptr<iAnalyzer> analyzer(AnalyzerFactory::createAnalyzer("RedondantHeaderAnalyzer", graph));
 	ASSERT_TRUE((bool)analyzer);
@@ -131,10 +131,10 @@ TEST(TestRedondantHeaderAnalyzer, testStraightInclusionOfThreeFilesWithTheBottom
 TEST(TestRedondantHeaderAnalyzer, testStraightInclusionOfFourFilesWithTheBottomOneAlsoIncludingTop)
 {
 	DependencyGraph graph;
-	graph.addLien("header1.hpp", "main.cpp");
-	graph.addLien("header2.hpp", "header1.hpp");
-	graph.addLien("header3.hpp", "header2.hpp");
-	graph.addLien("header3.hpp", "main.cpp");
+	graph.addEdge("header1.hpp", "main.cpp");
+	graph.addEdge("header2.hpp", "header1.hpp");
+	graph.addEdge("header3.hpp", "header2.hpp");
+	graph.addEdge("header3.hpp", "main.cpp");
 
 	std::unique_ptr<iAnalyzer> analyzer(AnalyzerFactory::createAnalyzer("RedondantHeaderAnalyzer", graph));
 	ASSERT_TRUE((bool)analyzer);
