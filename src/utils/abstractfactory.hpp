@@ -37,7 +37,7 @@ public:
 	
     bool registerProduct(typename const_parameter_trait<IdentifierType>::type id, ProductCreator creator)
 	{
-        return m_associations.insert(typename AssocMap::value_type(id, creator)).second;
+        return m_associations.insert(std::make_pair(id, creator)).second;
 	}
 	
     bool unregisterProduct(typename const_parameter_trait<IdentifierType>::type id)

@@ -1,6 +1,8 @@
 #include "graphconstructor.hpp"
 #include "dependencygraph.hpp"
 
+#include <file/ifile.hpp>
+
 #include <fstream>
 
 StringHelper::type_vector_string GraphConstructor::s_extensions = {"h", "hpp", "h++", "c", "cc", "cpp"};
@@ -58,7 +60,9 @@ void GraphConstructor::analyseFile(DependencyGraph& graph, const boost::filesyst
 	std::ifstream f(p.generic_string().c_str(), std::ios::in);
 	if(!f) throw std::invalid_argument("Unable to open file " + p.generic_string());
 
-	graph.addNoeud(boost::filesystem::absolute(fileName));
+	auto v = graph.addNoeud(boost::filesystem::absolute(fileName).generic_string());
+	const auto& file = graph(v);
+	assert(file->isModifiable());
 
 	std::string line;
 	while(std::getline(f, line))
@@ -81,7 +85,7 @@ void GraphConstructor::analyseFile(DependencyGraph& graph, const boost::filesyst
 			boost::filesystem::path localPath = dir / path;
 			if(boost::filesystem::exists(localPath))
 			{
-				path = localPath;
+				path = boost::filesystem::absolute(localPath);
 			}
 			else
 			{
@@ -98,7 +102,7 @@ void GraphConstructor::analyseFile(DependencyGraph& graph, const boost::filesyst
 		}
 		std::string newFile = path.generic_string();
 		if(StringHelper::startsWith(newFile, "./")) newFile.erase(0, 2);
-		graph.addLien(boost::filesystem::absolute(newFile), boost::filesystem::absolute(fileName));
+		graph.addLien(newFile, fileName);
 	}
 }
 

@@ -29,8 +29,8 @@ void RedondantHeaderAnalyzer::do_printReport(std::ostream& out) const
 
 	for(const ReportData& data : m_datas)
 	{
-		out << "In file " << g(data.m_sourceFile) << ": redondant inclusion of " << g(data.m_redondantHeader) << 
-				". It is already included by " << g(data.m_headerAlreadyIncludingIt) << std::endl;
+		out << "In file " << g(data.m_sourceFile)->filePath() << ": redondant inclusion of " << g(data.m_redondantHeader)->filePath() << 
+				". It is already included by " << g(data.m_headerAlreadyIncludingIt)->filePath() << std::endl;
 	}
 }
 

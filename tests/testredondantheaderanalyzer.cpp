@@ -80,8 +80,8 @@ void TestRedondantHeaderAnalyzer::testDiamondShapedInclusionOfFourFilesAndBottom
 	std::stringstream ioss;
 	analyzer->printReport(ioss);
 
-	std::string res("Redondant header analysis report:\nIn file \"main.cpp\": redondant inclusion of \"global.hpp\". It is already included by \"header1.hpp\"\n");
-	res += "In file \"main.cpp\": redondant inclusion of \"global.hpp\". It is already included by \"header2.hpp\"\n";
+	std::string res("Redondant header analysis report:\nIn file main.cpp: redondant inclusion of global.hpp. It is already included by header1.hpp\n");
+	res += "In file main.cpp: redondant inclusion of global.hpp. It is already included by header2.hpp\n";
 	CPPUNIT_ASSERT_EQUAL(res, ioss.str());
 }
 
@@ -100,7 +100,7 @@ void TestRedondantHeaderAnalyzer::testStraightInclusionOfThreeFilesWithTheBottom
 	std::stringstream ioss;
 	analyzer->printReport(ioss);
 
-	std::string res("Redondant header analysis report:\nIn file \"main.cpp\": redondant inclusion of \"header2.hpp\". It is already included by \"header1.hpp\"\n");
+	std::string res("Redondant header analysis report:\nIn file main.cpp: redondant inclusion of header2.hpp. It is already included by header1.hpp\n");
 	CPPUNIT_ASSERT_EQUAL(res, ioss.str());
 }
 
@@ -124,6 +124,6 @@ void TestRedondantHeaderAnalyzer::testStraightInclusionOfFourFilesWithTheBottomO
 	std::stringstream ioss;
 	analyzer->printReport(ioss);
 
-	std::string res("Redondant header analysis report:\nIn file \"main.cpp\": redondant inclusion of \"header3.hpp\". It is already included by \"header1.hpp\"\n");
+	std::string res("Redondant header analysis report:\nIn file main.cpp: redondant inclusion of header3.hpp. It is already included by header1.hpp\n");
 	CPPUNIT_ASSERT_EQUAL(res, ioss.str());
 }

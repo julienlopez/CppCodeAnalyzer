@@ -1,7 +1,7 @@
 #include "testfile.hpp"
 #include "utils_tests.hpp"
 
-#include <file.hpp>
+#include <file/modifiablefile.hpp>
 #include <utils/stringhelper.hpp>
 
 #include <boost/filesystem.hpp>
@@ -21,7 +21,7 @@ void TestFile::tearDown()
 
 void TestFile::testThrowOnInvalidFile()
 {
-	CPPUNIT_ASSERT_THROW(File f("invalide/path.txt"), std::invalid_argument);
+	CPPUNIT_ASSERT_THROW(ModifiableFile f("invalide/path.txt"), std::invalid_argument);
 }
 
 void TestFile::testParseFileWithOneLine()
@@ -29,7 +29,7 @@ void TestFile::testParseFileWithOneLine()
 	std::string line = "int add();";
 	utils_tests::createFileWithContent(m_dir_base, "main.cpp", line);
 	boost::filesystem::path file = m_dir_base / "main.cpp";
-	File f(file.generic_string());
+	ModifiableFile f(file.generic_string());
 	CPPUNIT_ASSERT_EQUAL((std::size_t)1, f.count());
 	CPPUNIT_ASSERT_EQUAL((std::size_t)0, f.count(Line::Type::Comment));
 	CPPUNIT_ASSERT_EQUAL((std::size_t)0, f.count(Line::Type::Preprocessor));
@@ -43,7 +43,7 @@ void TestFile::testParseFileWithOneCommentLine()
 	std::string line = "//int add();";
 	utils_tests::createFileWithContent(m_dir_base, "main.cpp", line);
 	boost::filesystem::path file = m_dir_base / "main.cpp";
-	File f(file.generic_string());
+	ModifiableFile f(file.generic_string());
 	CPPUNIT_ASSERT_EQUAL((std::size_t)1, f.count());
 	CPPUNIT_ASSERT_EQUAL((std::size_t)1, f.count(Line::Type::Comment));
 	CPPUNIT_ASSERT_EQUAL((std::size_t)0, f.count(Line::Type::Preprocessor));
@@ -57,7 +57,7 @@ void TestFile::testParseFileWithOnePreprocessorLine()
 	std::string line = "#include <file.h>";
 	utils_tests::createFileWithContent(m_dir_base, "main.cpp", line);
 	boost::filesystem::path file = m_dir_base / "main.cpp";
-	File f(file.generic_string());
+	ModifiableFile f(file.generic_string());
 	CPPUNIT_ASSERT_EQUAL((std::size_t)1, f.count());
 	CPPUNIT_ASSERT_EQUAL((std::size_t)0, f.count(Line::Type::Comment));
 	CPPUNIT_ASSERT_EQUAL((std::size_t)1, f.count(Line::Type::Preprocessor));
@@ -74,7 +74,7 @@ void TestFile::testParseFileWithOneLineOfEach()
 											  };
 	utils_tests::createFileWithContent(m_dir_base, "main.cpp", lines[Line::Type::Preprocessor] + "\n" + lines[Line::Type::Comment] + "\n" + lines[Line::Type::Other]);
 	boost::filesystem::path file = m_dir_base / "main.cpp";
-	File f(file.generic_string());
+	ModifiableFile f(file.generic_string());
 	CPPUNIT_ASSERT_EQUAL((std::size_t)3, f.count());
 	CPPUNIT_ASSERT_EQUAL((std::size_t)1, f.count(Line::Type::Comment));
 	CPPUNIT_ASSERT_EQUAL((std::size_t)1, f.count(Line::Type::Preprocessor));
@@ -97,7 +97,7 @@ void TestFile::testParseFileWithOneMultiLineComment()
 	std::string line3 = "*/";
 	utils_tests::createFileWithContent(m_dir_base, "main.cpp", line1 + "\n" + line2 + "\n" + line3);
 	boost::filesystem::path file = m_dir_base / "main.cpp";
-	File f(file.generic_string());
+	ModifiableFile f(file.generic_string());
 	CPPUNIT_ASSERT_EQUAL((std::size_t)3, f.count());
 	CPPUNIT_ASSERT_EQUAL((std::size_t)3, f.count(Line::Type::Comment));
 	CPPUNIT_ASSERT_EQUAL((std::size_t)0, f.count(Line::Type::Preprocessor));
@@ -120,7 +120,7 @@ void TestFile::testCommentedIncludeLine()
 	std::string line3 = "#include \"c.h\"";
 	utils_tests::createFileWithContent(m_dir_base, "main.cpp", line1 + "\n" + line2 + "\n" + line3);
 	boost::filesystem::path file = m_dir_base / "main.cpp";
-	File f(file.generic_string());
+	ModifiableFile f(file.generic_string());
 	CPPUNIT_ASSERT_EQUAL((std::size_t)3, f.count());
 	CPPUNIT_ASSERT_EQUAL((std::size_t)1, f.count(Line::Type::Comment));
 	CPPUNIT_ASSERT_EQUAL((std::size_t)2, f.count(Line::Type::Preprocessor));
@@ -141,7 +141,7 @@ void TestFile::testMultiLineCommentedIncludeLine()
 	StringHelper::type_vector_string lines = { {"#include \"a.h\""}, {"/*"}, {"#include \"b.h\""}, {"#include \"c.h\""}, {"*/"}, {"#include \"d.h\""} };
 	utils_tests::createFileWithContent(m_dir_base, "main.cpp", StringHelper::join(lines, "\n"));
 	boost::filesystem::path file = m_dir_base / "main.cpp";
-	File f(file.generic_string());
+	ModifiableFile f(file.generic_string());
 	CPPUNIT_ASSERT_EQUAL((std::size_t)6, f.count());
 	CPPUNIT_ASSERT_EQUAL((std::size_t)4, f.count(Line::Type::Comment));
 	CPPUNIT_ASSERT_EQUAL((std::size_t)2, f.count(Line::Type::Preprocessor));

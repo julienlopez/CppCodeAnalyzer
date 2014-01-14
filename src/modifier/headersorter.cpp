@@ -1,6 +1,7 @@
 #include "headersorter.hpp"
 
-#include <file.hpp>
+#include <file/modifiablefile.hpp>
+
 #include <utils/algorithms.hpp>
 
 const std::string HeaderSorter::s_name = "HeaderSorter";
@@ -24,11 +25,18 @@ void HeaderSorter::processFile(DependencyGraph::vertex_descriptor it)
 {
 	try 
 	{
-		File file(graph()(it).generic_string());
+		//TODO clean up that part
+		auto& node = graph()(it);
+		if(!node->isModifiable()) 
+			return;
+
+		ModifiableFile* mf = dynamic_cast<ModifiableFile*>(node.get());
+		assert(mf);
+		ModifiableFile& file = *mf;
 
 		auto predIsIncludeStatement = std::bind(&Line::isAnIncludeStatement, std::placeholders::_1);
 
-		File::iterator it_header = file.first_of(predIsIncludeStatement);
+		ModifiableFile::iterator it_header = file.first_of(predIsIncludeStatement);
 		if(it_header == file.end()) return;
 
 		utils::gather(file.begin(), file.end(), it_header, predIsIncludeStatement);

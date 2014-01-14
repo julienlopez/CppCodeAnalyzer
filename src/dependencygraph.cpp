@@ -1,43 +1,45 @@
 #include "dependencygraph.hpp"
 
 #include <fstream>
+
+#include <boost/filesystem.hpp>
+
 #include <boost/graph/graphviz.hpp>
 #include <boost/graph/breadth_first_search.hpp>
+
+#include <file/ifile.hpp>
+#include <file/filefactory.hpp>
+
+#include <utils/stringhelper.hpp>
 
 DependencyGraph::DependencyGraph()
 {}
 
-void DependencyGraph::print(std::ostream& o) const {
+void DependencyGraph::print(std::ostream& o) const
+{
     boost::write_graphviz(o, d_reseau, label_writer(*this));
 }
 
-void DependencyGraph::addNoeud(const DependencyGraph::type_node& node) {
-    boost::graph_traits<Reseau>::vertex_descriptor v;
-    type_map_vertex_descriptor::iterator i_v;
-    i_v = d_mid2vertex.find(node);
-	if(i_v ==d_mid2vertex.end()) {
-		v = add_vertex(d_reseau);
-		d_reseau[v] = node;
-		d_mid2vertex[node] = v;
-	}
+DependencyGraph::vertex_descriptor DependencyGraph::addNoeud(const std::string& node)
+{
+    auto its = vertices();
+    auto i_v = std::find_if(its.first, its.second, [&node, this](DependencyGraph::vertex_descriptor v){ return StringHelper::endsWith(d_reseau[v]->filePath(), node); });
+	
+	if(i_v != its.second) 
+	return *i_v;
+
+	auto v = add_vertex(d_reseau);
+	d_reseau[v] = FileFactory::createFile(boost::filesystem::exists(node)?"Modifiable":"External", node);
+	return v;
 }
 
-void DependencyGraph::addLien(const DependencyGraph::type_node& from, const DependencyGraph::type_node& to) {
-	addNoeud(from);
-	addNoeud(to);
-	type_map_vertex_descriptor::iterator ifrom = d_mid2vertex.find(from);
-	if(ifrom != d_mid2vertex.end()) {
-		type_map_vertex_descriptor::iterator ito = d_mid2vertex.find(to);
-		if(ito!=d_mid2vertex.end()) {
-		    if(d_link.find(std::make_pair(from,to))==d_link.end()) {
-		    	boost::graph_traits<Reseau>::vertex_descriptor v1 = ifrom->second;
-		    	boost::graph_traits<Reseau>::vertex_descriptor v2 = ito->second;
-		    	add_edge(v1,v2,d_reseau);
-		    	d_link.insert(std::make_pair(from,to));
-		    }
-		    return;
-		}
-	}
+DependencyGraph::edge_descriptor DependencyGraph::addLien(const std::string& from, const std::string& to)
+{
+	auto v1 = addNoeud(from);
+	auto v2 = addNoeud(to);
+	
+	return add_edge(v1, v2, d_reseau).first;
+
 }
 
 const DependencyGraph::type_node& DependencyGraph::operator()(vertex_descriptor v) const
@@ -125,5 +127,5 @@ void DependencyGraph::label_writer::operator()(std::ostream& out, const boost::g
 }
 
 std::string DependencyGraph::label_writer::createLabel(const boost::graph_traits<Reseau>::vertex_descriptor& v) const {
-	return d_sr.d_reseau[v].generic_string();
+	return d_sr.d_reseau[v]->filePath();
 }

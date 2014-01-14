@@ -28,7 +28,7 @@ namespace {
 
 		bool operator()(const DependencyGraph::vertex_descriptor v) const
 		{
-			return StringHelper::endsWith(m_graph(v).generic_string(), m_path) || StringHelper::endsWith(m_path, m_graph(v).generic_string());
+			return StringHelper::endsWith(m_graph(v)->filePath(), m_path) || StringHelper::endsWith(m_path, m_graph(v)->filePath());
 		}
 
 	private:

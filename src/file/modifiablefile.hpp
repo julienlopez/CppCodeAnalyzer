@@ -1,27 +1,20 @@
 #ifndef __FILE_HPP__
 #define __FILE_HPP__
 
-#include <line.hpp>
-
-#include <iterator>
-#include <vector>
+#include <file/crtp_file.hpp>
 
 #include <boost/filesystem/path.hpp>
 
-class File
+class ModifiableFile : public CRTP_File<ModifiableFile>
 {
 public:
 	using type_path = boost::filesystem::path;
-
-	using type_container = std::vector<Line>;
-	using iterator = type_container::iterator;
-	using const_iterator = type_container::const_iterator;
 
 	/**
 	* \brief opens and parses the given file.
 	* \throw std::invalid_argument if unable to open the given file.
 	*/
-	File(const std::string& filePath_);
+	ModifiableFile(const std::string& filePath_);
 
 	std::size_t count() const;
 
@@ -52,9 +45,15 @@ public:
 
 	void print() const;
 
+	static std::string type();
+
+	virtual bool impl_isModifiable() const final override;
+
 private:
 	type_path m_filePath;
 	type_container m_lines;
+
+	// virtual ~ModifiableFile() = default;
 };
 
 #endif

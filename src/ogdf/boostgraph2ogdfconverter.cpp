@@ -5,6 +5,8 @@
 
 #include <dependencygraph.hpp>
 
+#include <file/ifile.hpp>
+
 BoostGraph2OGDFConverter::type_result BoostGraph2OGDFConverter::convert(const DependencyGraph& graph)
 {
 	up_graph G { new ogdf::Graph };
@@ -21,7 +23,7 @@ BoostGraph2OGDFConverter::type_result BoostGraph2OGDFConverter::convert(const De
 	std::for_each(vertices.first, vertices.second, [&G, &GA, &graph, &m_vertexMap](DependencyGraph::vertex_descriptor v)
 	{
 		ogdf::node n = G->newNode();
-		GA->labelNode(n) = graph(v).generic_string().c_str();
+		GA->labelNode(n) = graph(v)->filePath().c_str();
 		m_vertexMap.insert(std::make_pair(v, n));
 	});
 
