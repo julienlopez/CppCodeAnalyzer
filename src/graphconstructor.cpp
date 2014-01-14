@@ -63,19 +63,9 @@ void GraphConstructor::analyseFile(DependencyGraph& graph, const boost::filesyst
 	auto lines = file->getLinesByType(Line::Type::Preprocessor);
 	for(const auto& l : lines)
 	{
-		std::string line = l.content();
-        if(!StringHelper::startsWith(line, "#include")) continue;
-        line.erase(0, 8);
-
-        cleanUpLine(line);
-
-		if(!(StringHelper::startsWith(line, "\"") && StringHelper::endsWith(line, "\"")) && !(StringHelper::startsWith(line, "<") && StringHelper::endsWith(line, ">")))
-			// throw ParsingError("invalid line: `" + line + "` in " + p.generic_string());
-			std::cerr << "invalid line: `" << line << "` in " << p.generic_string() << std::endl;
-
-		line.erase(0, 1);
-		line.erase(line.length()-1, 1);
-
+		std::string line = parseIncludeLine(l, p);
+        if(line.empty()) continue;
+        
 		boost::filesystem::path path(line);
 		if(!boost::filesystem::exists(path))
 		{
@@ -120,4 +110,24 @@ boost::filesystem::path GraphConstructor::findFileInIncludeDirs(const boost::fil
 			return p;
 	}
 	return boost::filesystem::path();
+}
+
+std::string GraphConstructor::parseIncludeLine(const Line& line, const boost::filesystem::path& p)
+{
+	std::string l = line.content();
+    if(!StringHelper::startsWith(l, "#include")) 
+    	return std::string();
+
+    l.erase(0, 8);
+    cleanUpLine(l);
+
+	if(!(StringHelper::startsWith(l, "\"") && StringHelper::endsWith(l, "\"")) && !(StringHelper::startsWith(l, "<") && StringHelper::endsWith(l, ">")))
+		// throw ParsingError("invalid line: `" + line + "` in " + p.generic_string());
+		std::cerr << "invalid line: `" << l << "` in " << p.generic_string() << std::endl;
+
+	if(l.size() < 2) return std::string();
+
+	l.erase(0, 1);
+	l.erase(l.length()-1, 1);
+	return l;
 }

@@ -7,6 +7,7 @@
 #include <boost/filesystem.hpp>
 
 class DependencyGraph;
+class Line;
 
 class GraphConstructor
 {
@@ -59,6 +60,8 @@ class GraphConstructor
 		static void cleanUpLine(std::string& line);
 
 		static boost::filesystem::path findFileInIncludeDirs(const boost::filesystem::path& file);
+
+		static std::string parseIncludeLine(const Line& line, const boost::filesystem::path& p);
 
 };
 
