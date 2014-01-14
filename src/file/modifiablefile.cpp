@@ -93,3 +93,10 @@ bool ModifiableFile::impl_isModifiable() const
 {
 	return true;
 }
+
+ModifiableFile::type_container ModifiableFile::impl_getLinesByType(Line::Type type) const
+{
+	type_container result;
+	std::copy_if(std::begin(m_lines), std::end(m_lines), std::back_inserter(result), Line::ComparatorByType(&Line::type, type));
+	return result;
+}

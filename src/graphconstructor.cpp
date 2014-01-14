@@ -3,8 +3,6 @@
 
 #include <file/ifile.hpp>
 
-#include <fstream>
-
 StringHelper::type_vector_string GraphConstructor::s_extensions = {"h", "hpp", "h++", "c", "cc", "cpp"};
 
 GraphConstructor::type_vector_path GraphConstructor::s_includePaths;
@@ -57,16 +55,15 @@ void GraphConstructor::analyseFile(DependencyGraph& graph, const boost::filesyst
 
 	std::string fileName = p.generic_string();
 	if(StringHelper::startsWith(fileName, "./")) fileName.erase(0, 2);
-	std::ifstream f(p.generic_string().c_str(), std::ios::in);
-	if(!f) throw std::invalid_argument("Unable to open file " + p.generic_string());
 
 	auto v = graph.addNoeud(boost::filesystem::absolute(fileName).generic_string());
 	const auto& file = graph(v);
 	assert(file->isModifiable());
 
-	std::string line;
-	while(std::getline(f, line))
+	auto lines = file->getLinesByType(Line::Type::Preprocessor);
+	for(const auto& l : lines)
 	{
+		std::string line = l.content();
         if(!StringHelper::startsWith(line, "#include")) continue;
         line.erase(0, 8);
 

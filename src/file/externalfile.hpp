@@ -12,6 +12,8 @@ public:
 	static std::string type();
 
 	virtual bool impl_isModifiable() const final override;
+
+	virtual type_container impl_getLinesByType(Line::Type type) const final override;
 };
 
 #endif

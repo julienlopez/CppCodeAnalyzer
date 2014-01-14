@@ -21,6 +21,8 @@ public:
 
 	const std::string& filePath() const;
 
+	type_container getLinesByType(Line::Type type) const;
+
 protected:
 	iFile() = default;
 
@@ -31,6 +33,8 @@ private:
 	virtual const std::string& impl_filePath() const = 0;
 
 	virtual bool impl_isModifiable() const = 0;
+
+	virtual type_container impl_getLinesByType(Line::Type type) const = 0;
 };
 
 #endif
