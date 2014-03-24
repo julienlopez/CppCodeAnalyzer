@@ -33,4 +33,5 @@ target_link_libraries(tests
         boost_filesystem
         gtest
         OGDF
+        pthread
 )
