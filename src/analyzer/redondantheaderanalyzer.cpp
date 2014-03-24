@@ -36,7 +36,7 @@ void RedondantHeaderAnalyzer::do_printReport(std::ostream& out) const
 
 void RedondantHeaderAnalyzer::analyseVertex(const DependencyGraph& g, DependencyGraph::vertex_iterator it)
 {
-	std::list<DependencyGraph::vertex_descriptor> parents = g.parents(*it);
+	auto parents = g.parents(*it);
 	for(const DependencyGraph::vertex_descriptor& d : parents)
 	{
 		for(const DependencyGraph::vertex_descriptor& d2 : parents)
