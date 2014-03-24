@@ -13,7 +13,7 @@ public:
 
 	virtual bool impl_isModifiable() const final override;
 
-	virtual type_container impl_getLinesByType(Line::Type type) const final override;
+	virtual type_container impl_getLinesByType(Line::Type t) const final override;
 };
 
 #endif
