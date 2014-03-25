@@ -6,17 +6,6 @@
 
 #include <fstream>
 
-void TestGraphConstructor::SetUp()
-{
-	m_dir_base = boost::filesystem::path("base");
-	ASSERT_TRUE(boost::filesystem::create_directory(m_dir_base)) << "unable to create directory";
-}
-
-void TestGraphConstructor::TearDown()
-{
-	boost::filesystem::remove_all(m_dir_base);
-}
-
 namespace {
 	class CompareGraphVertexByFilePath
 	{

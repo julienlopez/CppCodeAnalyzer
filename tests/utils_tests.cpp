@@ -2,6 +2,8 @@
 
 #include <fstream>
 
+#include <boost/filesystem.hpp>
+
 void utils_tests::createEmptyFile(boost::filesystem::path dir, const std::string& fileName)
 {
 	dir /= boost::filesystem::path(fileName);
@@ -35,4 +37,15 @@ std::string utils_tests::readFileAsAString(boost::filesystem::path dir, const st
 	while(std::getline(ifs, line))
 		res += line + '\n';
 	return res;
+}
+
+void utils_tests::GTestWithFilesBase::SetUp()
+{
+	m_dir_base = boost::filesystem::path("base");
+	ASSERT_TRUE(boost::filesystem::create_directory(m_dir_base)) << "unable to create directory";
+}
+
+void utils_tests::GTestWithFilesBase::TearDown()
+{
+	boost::filesystem::remove_all(m_dir_base);
 }

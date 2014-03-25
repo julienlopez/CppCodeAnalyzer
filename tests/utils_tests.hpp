@@ -3,6 +3,8 @@
 
 #include <boost/filesystem/path.hpp>
 
+#include <gtest/gtest.h>
+
 namespace utils_tests
 {
 	/**
@@ -32,6 +34,16 @@ namespace utils_tests
 	* \brief read the content of a file and puts it in a string.
 	*/
 	std::string readFileAsAString(boost::filesystem::path dir, const std::string& fileName);
+
+	struct GTestWithFilesBase : public ::testing::Test
+	{
+	protected:
+		virtual void SetUp() override;
+		virtual void TearDown() override;
+
+	public:
+		boost::filesystem::path m_dir_base;
+	};
 }
 
 #endif
