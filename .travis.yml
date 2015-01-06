@@ -15,9 +15,11 @@ before_install:
   - sudo add-apt-repository ppa:apokluda/boost1.53 -y
   - sudo apt-get update
   - sudo apt-get install libboost1.53-dev
+  - ls -la /usr/lib/
+  - ls -la /usr/
+  - ls -la /usr/lib64/
   - chmod 755 ci/build_gtest.sh
   - sudo ci/build_gtest.sh
-  - ls -la /usr/lib/
   - chmod 755 ci/build_ogdf.sh
   - ci/build_ogdf.sh
   - chmod 755 tests.sh
