@@ -10,9 +10,11 @@ before_install:
   - sudo apt-get update -qq
   - if [ "$CXX" = "g++" ]; then sudo apt-get install -qq g++-4.9; fi
   - if [ "$CXX" = "g++" ]; then sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.9 90; fi
-  - sudo apt-get install libboost-all-dev
   - sudo apt-get install libgtest-dev
   - sudo apt-get install google-mock
+  - sudo add-apt-repository ppa:apokluda/boost1.53 -y
+  - sudo apt-get update
+  - sudo apt-get install libboost-all-dev
   - chmod 755 ci/build_gtest.sh
   - sudo ci/build_gtest.sh
   - chmod 755 tests.sh
