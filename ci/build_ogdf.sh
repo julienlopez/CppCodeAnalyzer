@@ -6,6 +6,3 @@ cd OGDF
 make
 sudo ln -s /home/travis/build/julienlopez/CppCodeAnalyzer/OGDF/ogdf /usr/include
 sudo ln -s /home/travis/build/julienlopez/CppCodeAnalyzer/OGDF/_release/libOGDF.a /usr/lib
-ls -la
-ls -l /usr/include/ogdf
-ls -l /usr/lib/libOGDF*
