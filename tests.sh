@@ -11,9 +11,9 @@ function error_exit
 	exit 1
 }
 
-#[ -d "$BUILD_DIR" ] && rm -rf $BUILD_DIR
-#mkdir $BUILD_DIR && cd $BUILD_DIR && cmake ../tests -G"Unix Makefiles" -Dogdf_include_directory:PATH=$OGDF_INCLUDE_PATH -Dogdf_lib_directory:PATH=$OGDF_DEBUG_LIB_PATH && make VERBOSE=1
-cd $BUILD_DIR && cmake ../tests -G"Unix Makefiles" -Dogdf_include_directory:PATH=$OGDF_INCLUDE_PATH -Dogdf_lib_directory:PATH=$OGDF_DEBUG_LIB_PATH && make VERBOSE=1
+[ -d "$BUILD_DIR" ] && rm -rf $BUILD_DIR
+mkdir $BUILD_DIR && cd $BUILD_DIR && cmake ../tests -G"Unix Makefiles" -Dogdf_include_directory:PATH=$OGDF_INCLUDE_PATH -Dogdf_lib_directory:PATH=$OGDF_DEBUG_LIB_PATH && make VERBOSE=1
+#cd $BUILD_DIR && cmake ../tests -G"Unix Makefiles" -Dogdf_include_directory:PATH=$OGDF_INCLUDE_PATH -Dogdf_lib_directory:PATH=$OGDF_DEBUG_LIB_PATH && make VERBOSE=1
 
 [ $? -ne 0 ] && error_exit "Compile step failed."
 
