@@ -17,6 +17,7 @@ before_install:
   - sudo apt-get install libboost1.53-dev
   - ls -la /usr/lib/
   - ls -la /usr/
+  - find /usr -name libboost*
   - ls -la /usr/lib64/
   - chmod 755 ci/build_gtest.sh
   - sudo ci/build_gtest.sh
