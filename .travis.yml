@@ -15,3 +15,4 @@ before_install:
   - chmod 755 ci/build_gtest.sh
   - sudo ci/build_gtest.sh
   - chmod 755 tests.sh
+  - ls -la
