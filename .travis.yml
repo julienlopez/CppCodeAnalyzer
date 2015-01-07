@@ -29,3 +29,5 @@ before_install:
 after_success:
   - lcov --list build_tests/app.info # debug before upload
   - coveralls-lcov --repo-token 6qD4jB38tZVntMK1srg87gdBZp6aT1DMu build_tests/app.info # uploads
+  - cat build_tests/lcov.log
+  - cat build_tests/lcov.err
