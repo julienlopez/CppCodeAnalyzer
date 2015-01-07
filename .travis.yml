@@ -27,5 +27,5 @@ before_install:
   - gem install coveralls-lcov
 
 after_success:
-  - lcov --list app.info # debug before upload
-  - coveralls-lcov --repo-token 6qD4jB38tZVntMK1srg87gdBZp6aT1DMu app.info # uploads
+  - lcov --list build_tests/app.info # debug before upload
+  - coveralls-lcov --repo-token 6qD4jB38tZVntMK1srg87gdBZp6aT1DMu build_tests/app.info # uploads
